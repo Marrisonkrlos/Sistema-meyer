@@ -316,10 +316,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-    // Inicialização do Supabase
+    // Configuração do Supabase
     const SUPABASE_URL = 'https://scfvcqsvduupxwcvochn.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_3k26G50F4A5fauiOC7OG1w_Xi7Sr51-';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // E-mail do Administrador
+    const EMAIL_ADM = 'marrison.carlos@meyerr.com.br';
 
     // Gerenciador do Tema Escuro/Claro
     const themeToggleBtn = document.getElementById('themeToggle');
@@ -481,7 +484,7 @@
             return;
         }
         cadastros = data || [];
-        renderizarTabela();
+        await renderizarTabela();
     }
 
     function gerarLinkWhatsapp(cadastro, selectedIndex = 0) {
@@ -560,7 +563,7 @@
         </div>`;
     }
 
-    function renderizarTabela() {
+    async function renderizarTabela() {
         const tabelaCorpo = document.getElementById('tabelaCorpo');
         tabelaCorpo.innerHTML = ''; 
 
@@ -568,6 +571,11 @@
             tabelaCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum registro encontrado.</td></tr>';
             return;
         }
+
+        // Checa se o usuário atual é o Administrador
+        const { data: { session } } = await _supabase.auth.getSession();
+        const usuarioAtual = session?.user?.email || '';
+        const isAdm = (usuarioAtual.toLowerCase() === EMAIL_ADM.toLowerCase());
 
         cadastros.forEach((item, index) => {
             let arrSeries = (item.serie || '').split('\n').filter(s => s.trim() !== '');
@@ -592,12 +600,18 @@
 
             const linkWhatsapp = gerarLinkWhatsapp(item, 0);
             const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : '-';
+            
+            // Exibe o autor apenas se for o ADM logado
+            let autorInfo = '';
+            if (isAdm && item.modificado_por) {
+                autorInfo = ` por ${item.modificado_por.split('@')[0]}`;
+            }
 
             tabelaCorpo.innerHTML += `
                 <tr>
                     <td>
                         <span class="client-name">${item.cliente}</span>
-                        <div class="client-date">Atualizado: ${dataFormatada}</div>
+                        <div class="client-date">Atualizado: ${dataFormatada}${autorInfo}</div>
                     </td>
                     <td>
                         ${createComboOrText(arrSeries, 'serie', index, true, false)}
@@ -649,13 +663,17 @@
     formCrud.addEventListener('submit', async function(e) {
         e.preventDefault(); 
 
+        const { data: { session } } = await _supabase.auth.getSession();
+        const userEmail = session?.user?.email || 'Desconhecido';
+
         const dados = {
             cliente: document.getElementById('cliente').value,
             responsavel: document.getElementById('responsavel').value,
             modelo: document.getElementById('modelo').value,
             serie: document.getElementById('serie').value,
             contato: document.getElementById('contato').value,
-            local: document.getElementById('local').value
+            local: document.getElementById('local').value,
+            modificado_por: userEmail
         };
 
         if (editandoId) { 
