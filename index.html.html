@@ -66,7 +66,7 @@
             text-align: center; margin: auto; 
         }
 
-        #loginForm, #cadastroAuthForm, #recuperarAuthForm, #redefinirAuthForm, #alterarSenhaForm { display: flex; flex-direction: column; }
+        #loginForm, #cadastroAuthForm, #recuperarAuthForm, #redefinirAuthForm { display: flex; flex-direction: column; }
         
         .password-wrapper { position: relative; display: flex; align-items: center; }
         .password-wrapper input { width: 100%; padding-right: 40px; }
@@ -113,12 +113,10 @@
 
         h2 { text-align: center; color: var(--primary); font-size: 24px; margin-bottom: 20px; font-weight: 700; margin-top: 0; }
 
-        #cadastroForm, #alterarSenhaForm {
+        #cadastroForm {
             display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
             background: var(--bg); padding: 24px; border-radius: 8px; border: 1px solid var(--border);
         }
-
-        #alterarSenhaForm { max-width: 500px; margin: 0 auto; grid-template-columns: 1fr; }
 
         .form-group { display: flex; flex-direction: column; text-align: left; margin-bottom: 15px; }
         label { margin-bottom: 8px; font-weight: 600; font-size: 14px; color: var(--primary); display: flex; justify-content: space-between; }
@@ -156,7 +154,6 @@
         }
         .client-name:hover { color: var(--accent); }
 
-        /* CARDS COMPACTOS E COMPACTAÇÃO VISUAL DA SELEÇÃO */
         .card-box-container {
             background: var(--card-box-bg);
             border: 1px solid var(--border);
@@ -208,16 +205,7 @@
         }
         .btn-copy-inline:hover { color: var(--accent); }
 
-        .machine-title {
-            font-weight: 700;
-            font-size: 12px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .person-name {
+        .machine-title, .person-name {
             font-weight: 700;
             font-size: 12px;
             color: var(--primary);
@@ -385,7 +373,6 @@
         <div class="nav-menu">
             <button class="nav-btn active" id="btnNavInicio" onclick="mudarAba('inicio')"><i class="fa-solid fa-house"></i> Início</button>
             <button class="nav-btn" id="btnNavContatos" onclick="mudarAba('contatos')"><i class="fa-solid fa-address-book"></i> Contatos</button>
-            <button class="nav-btn" id="btnNavConta" onclick="mudarAba('conta')"><i class="fa-solid fa-key"></i> Minha Senha</button>
             <button class="nav-btn btn-sair" onclick="fazerLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
         </div>
     </div>
@@ -447,21 +434,6 @@
                 </table>
             </div>
         </div>
-
-        <!-- ABA 3: ALTERAR SENHA LOGADO -->
-        <div id="abaConta" class="hidden">
-            <h2>Alterar Minha Senha</h2>
-            <form id="alterarSenhaForm">
-                <div class="form-group">
-                    <label for="novaSenhaLogado">Nova Senha</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="novaSenhaLogado" required placeholder="Mínimo 6 caracteres" minlength="6">
-                        <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('novaSenhaLogado', this)"></i>
-                    </div>
-                </div>
-                <button type="submit" class="btn-login" id="btnAlterarSenha">Atualizar Senha</button>
-            </form>
-        </div>
     </div>
 </div>
 
@@ -469,15 +441,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-    // Configuração do Supabase
     const SUPABASE_URL = 'https://scfvcqsvduupxwcvochn.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_3k26G50F4A5fauiOC7OG1w_Xi7Sr51-';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // E-mail do Administrador
     const EMAIL_ADM = 'marrison.carlos@meyerr.com.br';
 
-    // Gerenciador do Tema Escuro/Claro
     const themeToggleBtn = document.getElementById('themeToggle');
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-mode');
@@ -531,11 +500,9 @@
     window.mudarAba = function(aba) {
         document.getElementById('abaInicio').classList.add('hidden');
         document.getElementById('abaContatos').classList.add('hidden');
-        document.getElementById('abaConta').classList.add('hidden');
         
         document.getElementById('btnNavInicio').classList.remove('active');
         document.getElementById('btnNavContatos').classList.remove('active');
-        document.getElementById('btnNavConta').classList.remove('active');
 
         if (aba === 'inicio') {
             document.getElementById('abaInicio').classList.remove('hidden');
@@ -544,9 +511,6 @@
             document.getElementById('abaContatos').classList.remove('hidden');
             document.getElementById('btnNavContatos').classList.add('active');
             carregarERenderizar();
-        } else if (aba === 'conta') {
-            document.getElementById('abaConta').classList.remove('hidden');
-            document.getElementById('btnNavConta').classList.add('active');
         }
     };
 
@@ -691,26 +655,6 @@
         }
     });
 
-    document.getElementById('alterarSenhaForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const novaSenha = document.getElementById('novaSenhaLogado').value;
-        const btn = document.getElementById('btnAlterarSenha');
-
-        try {
-            btn.textContent = "Atualizando..."; btn.disabled = true;
-            const { error } = await _supabase.auth.updateUser({ password: novaSenha });
-
-            if (error) throw error;
-
-            mostrarToast("Senha alterada com sucesso!");
-            document.getElementById('novaSenhaLogado').value = '';
-            btn.textContent = "Atualizar Senha"; btn.disabled = false;
-        } catch (erro) {
-            mostrarToast(erro.message || "Erro ao alterar a senha.", "error");
-            btn.textContent = "Atualizar Senha"; btn.disabled = false;
-        }
-    });
-
     // --- LÓGICA DO CRUD E RENDERIZAÇÃO DA TABELA ---
     document.getElementById('contato').addEventListener('input', function(e) {
         let lines = e.target.value.split('\n');
@@ -789,7 +733,6 @@
         const cVal = getVal(arrContatos, selectedIndex);
         const lVal = getVal(arrLocais, selectedIndex);
 
-        // Atualizar textos dos Cards
         const cardMaq = document.getElementById(`cardMaq-${rowIndex}`);
         if (cardMaq) {
             cardMaq.querySelector('.badge-text').textContent = `Série: ${sVal}`;
@@ -841,7 +784,6 @@
             const linkWhatsapp = gerarLinkWhatsapp(item, 0);
             const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : '';
             
-            // TOOLTIP NATIVO
             let autorInfo = '';
             if (isAdm && item.modificado_por) {
                 autorInfo = ` por ${item.modificado_por.split('@')[0]}`;
@@ -855,7 +797,6 @@
             const cInicial = arrContatos[0] || '';
             const lInicial = arrLocais[0] || '';
 
-            // OPÇÕES DO CARD DE MÁQUINAS: PRIORIDADE PARA SÉRIE
             const gerarOptionsMaquinas = () => {
                 let opts = '';
                 for (let i = 0; i < maxLines; i++) {
@@ -876,7 +817,6 @@
                 return opts;
             };
 
-            // Selects específicos para cada card
             const selectMaqHtml = maxLines > 1 ? `
                 <i class="fa-solid fa-chevron-down select-card-trigger"></i>
                 <select class="combo-select-card" onchange="sincronizarTodos(${index}, this.value)">${gerarOptionsMaquinas()}</select>
@@ -1032,7 +972,7 @@
         }
     }
 
-    // --- INICIALIZAÇÃO DE SESSÃO E VERIFICAÇÃO DE HASH ---
+    // --- INICIALIZAÇÃO DE SESSÃO E ESCUTA DE EVENTOS ---
     const emailSalvo = localStorage.getItem('lembrar_email');
     if (emailSalvo) {
         document.getElementById('emailLogin').value = emailSalvo;
