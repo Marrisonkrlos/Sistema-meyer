@@ -156,7 +156,6 @@
         }
         .client-name:hover { color: var(--accent); }
 
-        /* CARDS TECNOLÓGICOS E MODERNOS */
         .card-box-container {
             background: var(--card-box-bg);
             border: 1px solid var(--border);
@@ -841,7 +840,7 @@
             const linkWhatsapp = gerarLinkWhatsapp(item, 0);
             const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : '';
             
-            // MONTAGEM DO TOOLTIP NATIVO
+            // TOOLTIP NATIVO
             let autorInfo = '';
             if (isAdm && item.modificado_por) {
                 autorInfo = ` por ${item.modificado_por.split('@')[0]}`;
@@ -855,18 +854,30 @@
             const cInicial = arrContatos[0] || '';
             const lInicial = arrLocais[0] || '';
 
-            // Opções do Select
-            let options = '';
-            if (maxLines > 1) {
-                for(let i=0; i<maxLines; i++) {
-                    let lblM = arrModelos[i] || arrModelos[arrModelos.length-1] || `Opção ${i+1}`;
-                    options += `<option value="${i}">${lblM}</option>`;
+            // Gerador genérico de opções HTML para o select
+            const gerarOptions = (arr) => {
+                let opts = '';
+                for (let i = 0; i < maxLines; i++) {
+                    let val = arr[i] || arr[arr.length - 1] || `Opção ${i+1}`;
+                    opts += `<option value="${i}">${val}</option>`;
                 }
-            }
+                return opts;
+            };
 
-            const selectHtml = maxLines > 1 ? `
+            // Selects específicos para cada card
+            const selectMaqHtml = maxLines > 1 ? `
                 <i class="fa-solid fa-chevron-down select-card-trigger"></i>
-                <select class="combo-select-card" onchange="sincronizarTodos(${index}, this.value)">${options}</select>
+                <select class="combo-select-card" onchange="sincronizarTodos(${index}, this.value)">${gerarOptions(arrModelos)}</select>
+            ` : '';
+
+            const selectRespHtml = maxLines > 1 ? `
+                <i class="fa-solid fa-chevron-down select-card-trigger"></i>
+                <select class="combo-select-card" onchange="sincronizarTodos(${index}, this.value)">${gerarOptions(arrResponsaveis)}</select>
+            ` : '';
+
+            const selectLocalHtml = maxLines > 1 ? `
+                <i class="fa-solid fa-chevron-down select-card-trigger"></i>
+                <select class="combo-select-card" onchange="sincronizarTodos(${index}, this.value)">${gerarOptions(arrLocais)}</select>
             ` : '';
 
             tabelaCorpo.innerHTML += `
@@ -876,7 +887,7 @@
                     </td>
                     <td>
                         <div class="card-box-container" id="cardMaq-${index}">
-                            ${selectHtml}
+                            ${selectMaqHtml}
                             <div class="card-row">
                                 <span class="badge-serie">
                                     <i class="fa-solid fa-barcode" style="color: var(--accent);"></i> 
@@ -895,7 +906,7 @@
                     </td>
                     <td>
                         <div class="card-box-container" id="cardResp-${index}">
-                            ${selectHtml}
+                            ${selectRespHtml}
                             <div class="card-row">
                                 <div class="person-name">
                                     <i class="fa-solid fa-user-gear" style="color: var(--text-muted); font-size: 13px;"></i>
@@ -912,7 +923,7 @@
                     </td>
                     <td>
                         <div class="card-box-container" id="cardLocal-${index}" style="min-width: 140px;">
-                            ${selectHtml}
+                            ${selectLocalHtml}
                             <div class="card-row">
                                 <i class="fa-solid fa-location-dot" style="color: #38bdf8; font-size: 13px;"></i>
                                 <span class="local-text" style="font-weight: 600; color: var(--primary); font-size: 13px;">${lInicial || '-'}</span>
