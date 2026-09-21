@@ -136,7 +136,6 @@
         #btnCancelar { background-color: #94a3b8; display: none; }
         #btnCancelar:hover { background-color: #64748b; }
 
-        /* BUSCA E TOOLBAR */
         .table-toolbar {
             display: flex; justify-content: space-between; align-items: center;
             gap: 15px; margin-bottom: 15px; flex-wrap: wrap;
@@ -147,7 +146,17 @@
 
         .table-container { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
-        th { padding: 10px 12px; text-align: left; color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+        
+        th { 
+            padding: 10px 12px; text-align: left; color: var(--text-muted); 
+            font-weight: 600; text-transform: uppercase; font-size: 11px; 
+            letter-spacing: 0.5px; border-bottom: 1px solid var(--border); 
+            user-select: none; transition: color 0.2s;
+        }
+        th.sortable { cursor: pointer; }
+        th.sortable:hover { color: var(--accent); }
+        th .sort-icon { margin-left: 4px; font-size: 10px; opacity: 0.6; }
+
         td { padding: 10px 12px; text-align: left; vertical-align: middle; background-color: var(--card-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
         td:first-child { border-left: 1px solid var(--border); border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
         td:last-child { border-right: 1px solid var(--border); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
@@ -204,13 +213,16 @@
         }
 
         .action-buttons { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; }
-        .btn-whatsapp, .btn-excluir, .btn-editar { width: 32px; height: 32px; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: none; flex-shrink: 0; color: white; transition: opacity 0.2s;}
+        .btn-whatsapp, .btn-excluir, .btn-editar { 
+            width: 32px; height: 32px; text-decoration: none; border-radius: 6px; 
+            font-size: 13px; display: inline-flex; align-items: center; justify-content: center; 
+            cursor: pointer; border: none; flex-shrink: 0; color: white; transition: opacity 0.2s;
+        }
         .btn-whatsapp { background-color: var(--success); }
         .btn-editar { background-color: var(--warning); }
         .btn-excluir { background-color: var(--danger); }
         .btn-whatsapp:hover, .btn-editar:hover, .btn-excluir:hover { opacity: 0.85; }
 
-        /* PAGINAÇÃO COM SELETOR DE QUANTIDADE */
         .pagination-container {
             display: flex; justify-content: space-between; align-items: center;
             margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border);
@@ -225,15 +237,12 @@
         .btn-page:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-page:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
         
-        .items-per-page-container {
-            display: flex; align-items: center; gap: 6px; font-weight: 500;
-        }
+        .items-per-page-container { display: flex; align-items: center; gap: 6px; font-weight: 500; }
         .select-items-page {
             width: auto; padding: 4px 8px; font-size: 13px; font-weight: 600;
             border-radius: 6px; border: 1px solid var(--border); cursor: pointer;
         }
 
-        /* MODAL CUSTOMIZADO */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
@@ -241,12 +250,12 @@
         }
         .modal-card {
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
-            padding: 24px; max-width: 400px; width: 90%; text-align: center;
+            padding: 24px; max-width: 450px; width: 90%; text-align: center;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
         }
         .modal-card h3 { margin-top: 0; color: var(--primary); font-size: 18px; }
         .modal-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
-        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         .modal-btn {
             padding: 10px 18px; border-radius: 6px; border: none; font-weight: 600;
             font-size: 14px; cursor: pointer; transition: opacity 0.2s;
@@ -254,6 +263,9 @@
         .modal-btn-confirm { background: var(--danger); color: white; }
         .modal-btn-cancel { background: var(--border); color: var(--text-main); }
         .modal-btn:hover { opacity: 0.9; }
+
+        .history-list { text-align: left; font-size: 13px; line-height: 1.6; }
+        .history-item { padding: 8px 0; border-bottom: 1px dashed var(--border); }
 
         #toast { visibility: hidden; min-width: 250px; background-color: var(--success); color: #fff; text-align: center; border-radius: 8px; padding: 14px 20px; position: fixed; z-index: 3000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 14px; font-weight: 600; opacity: 0; transition: opacity 0.3s, top 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         #toast.show { visibility: visible; opacity: 1; top: 50px; }
@@ -285,6 +297,17 @@
         <div class="modal-actions">
             <button class="modal-btn modal-btn-cancel" onclick="fecharModalConfirm(false)">Cancelar</button>
             <button class="modal-btn modal-btn-confirm" id="btnModalConfirmAction">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE HISTÓRICO (EXCLUSIVO ADM) -->
+<div id="modalHistorico" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3><i class="fa-solid fa-clock-rotate-left" style="color: var(--accent);"></i> Histórico & Auditoria</h3>
+        <div id="historicoConteudo" class="history-list"></div>
+        <div style="margin-top: 20px;">
+            <button class="modal-btn modal-btn-cancel" onclick="fecharModalHistorico()">Fechar</button>
         </div>
     </div>
 </div>
@@ -434,7 +457,7 @@
             </form>
         </div>
 
-        <!-- ABA 2: LISTAGEM COM BUSCA E PAGINAÇÃO -->
+        <!-- ABA 2: LISTAGEM COM BUSCA, ORDENAÇÃO E PAGINAÇÃO -->
         <div id="abaContatos" class="hidden">
             <h2>Contatos Salvos</h2>
             
@@ -449,10 +472,10 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Cliente</th>
-                            <th>Série e Máquina</th>
-                            <th>Responsável e Contato</th>
-                            <th>Localização</th>
+                            <th class="sortable" onclick="ordenarPor('cliente')">Cliente <i id="sort-cliente" class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="sortable" onclick="ordenarPor('serie')">Série e Máquina <i id="sort-serie" class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="sortable" onclick="ordenarPor('responsavel')">Responsável e Contato <i id="sort-responsavel" class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="sortable" onclick="ordenarPor('local')">Localização <i id="sort-local" class="fa-solid fa-sort sort-icon"></i></th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -530,17 +553,21 @@
         document.getElementById('sectionRedefinir').classList.toggle('hidden', alvo !== 'redefinir');
     }
 
+    // Variável global para rastrear a aba ativa atual
+    let abaAtivaAtual = 'inicio';
+
     function mostrarApp() {
         telaAuth.classList.add('hidden');
         telaApp.classList.remove('hidden');
-        mudarAba('inicio'); 
-        carregarERenderizar(); 
+        // Preserva a aba atual em vez de forçar 'inicio'
+        mudarAba(abaAtivaAtual); 
     }
 
     async function fazerLogout() {
         await _supabase.auth.signOut();
         cadastros = [];
         cadastrosFiltrados = [];
+        abaAtivaAtual = 'inicio';
         document.getElementById('tabelaCorpo').innerHTML = '';
         telaApp.classList.add('hidden');
         telaAuth.classList.remove('hidden');
@@ -549,6 +576,7 @@
     }
 
     window.mudarAba = function(aba) {
+        abaAtivaAtual = aba; // Armazena a aba selecionada pelo usuário
         document.getElementById('abaInicio').classList.add('hidden');
         document.getElementById('abaContatos').classList.add('hidden');
         
@@ -713,7 +741,7 @@
         }
     });
 
-    // --- CRUD, FILTRAGEM E PAGINAÇÃO ---
+    // --- CRUD, FILTRAGEM, ORDENAÇÃO E PAGINAÇÃO ---
     document.getElementById('contato').addEventListener('input', function(e) {
         let lines = e.target.value.split('\n');
         let maskedLines = lines.map(line => {
@@ -730,6 +758,9 @@
     let itensPorPagina = 10;
     let editandoId = null; 
 
+    let colunaOrdenada = 'cliente';
+    let ordemAsc = true;
+
     const formCrud = document.getElementById('cadastroForm');
     const btnSalvar = document.getElementById('btnSalvar');
     const btnCancelar = document.getElementById('btnCancelar');
@@ -743,19 +774,53 @@
         const tabelaCorpo = document.getElementById('tabelaCorpo');
         tabelaCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando contatos...</td></tr>';
 
-        const { data, error } = await _supabase.from('clientes').select('*');
-        if (error) {
-            mostrarToast("Erro ao carregar os dados.", "error");
-            return;
+        try {
+            const { data, error } = await _supabase.from('clientes').select('*');
+            if (error) throw error;
+            
+            cadastros = data || [];
+            localStorage.setItem('meyer_cache_clientes', JSON.stringify(cadastros));
+        } catch (erro) {
+            console.warn("Modo Offline ativado ou falha de rede:", erro);
+            mostrarToast("Modo Offline (Cache)", "error");
+            const cache = localStorage.getItem('meyer_cache_clientes');
+            cadastros = cache ? JSON.parse(cache) : [];
         }
-        
-        cadastros = (data || []).sort((a, b) => {
-            const clienteA = a.cliente || '';
-            const clienteB = b.cliente || '';
-            return clienteA.localeCompare(clienteB, undefined, { numeric: true, sensitivity: 'base' });
+
+        aplicarOrdenacao();
+        filtrarContatos();
+    }
+
+    window.ordenarPor = function(coluna) {
+        if (colunaOrdenada === coluna) {
+            ordemAsc = !ordemAsc;
+        } else {
+            colunaOrdenada = coluna;
+            ordemAsc = true;
+        }
+
+        ['cliente', 'serie', 'responsavel', 'local'].forEach(c => {
+            const icon = document.getElementById(`sort-${c}`);
+            if (icon) {
+                if (c === colunaOrdenada) {
+                    icon.className = ordemAsc ? 'fa-solid fa-sort-up sort-icon' : 'fa-solid fa-sort-down sort-icon';
+                } else {
+                    icon.className = 'fa-solid fa-sort sort-icon';
+                }
+            }
         });
 
-        filtrarContatos();
+        aplicarOrdenacao();
+        renderizarTabela();
+    }
+
+    function aplicarOrdenacao() {
+        cadastros.sort((a, b) => {
+            const valA = (a[colunaOrdenada] || '').toString().toLowerCase();
+            const valB = (b[colunaOrdenada] || '').toString().toLowerCase();
+            const res = valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
+            return ordemAsc ? res : -res;
+        });
     }
 
     window.filtrarContatos = function() {
@@ -802,6 +867,37 @@
         }
 
         return `https://wa.me/55${numeroLimpo}?text=${encodeURIComponent(msgPadrao)}`;
+    }
+
+    window.abrirHistoricoCliente = async function(id) {
+        const { data: { session } } = await _supabase.auth.getSession();
+        const emailUsuario = session?.user?.email || '';
+
+        if (emailUsuario.toLowerCase() !== EMAIL_ADM.toLowerCase()) {
+            mostrarToast("Acesso ao histórico restrito ao Administrador.", "error");
+            return;
+        }
+
+        const item = cadastros.find(c => c.id === id);
+        if (!item) return;
+
+        const conteudoDiv = document.getElementById('historicoConteudo');
+        const dataCriacao = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : 'Desconhecida';
+        const modificadoPor = item.modificado_por || 'Não registrado';
+
+        conteudoDiv.innerHTML = `
+            <div class="history-item"><strong>Empresa/Cliente:</strong> ${item.cliente}</div>
+            <div class="history-item"><strong>ID do Sistema:</strong> <small>${item.id}</small></div>
+            <div class="history-item"><strong>Última Atualização:</strong> ${dataCriacao}</div>
+            <div class="history-item"><strong>Modificado por:</strong> ${modificadoPor}</div>
+            <div class="history-item"><strong>Status:</strong> Registro Ativo</div>
+        `;
+
+        document.getElementById('modalHistorico').classList.remove('hidden');
+    }
+
+    window.fecharModalHistorico = function() {
+        document.getElementById('modalHistorico').classList.add('hidden');
     }
 
     window.sincronizarTodos = function(rowIndex, selectedIndex) {
@@ -888,7 +984,7 @@
                 autorInfo = ` por ${item.modificado_por.split('@')[0]}`;
             }
 
-            const tooltipText = dataFormatada ? `🕒 Atualizado em: ${dataFormatada}${autorInfo}` : 'Sem registros de atualização';
+            const tooltipText = dataFormatada ? `🕒 Clique para abrir detalhes (Atualizado: ${dataFormatada}${autorInfo})` : 'Clique para ver o histórico';
 
             const sInicial = arrSeries[0] || '';
             const mInicial = arrModelos[0] || '';
@@ -934,7 +1030,7 @@
             tabelaCorpo.innerHTML += `
                 <tr>
                     <td>
-                        <span class="client-name" title="${tooltipText}">${item.cliente}</span>
+                        <span class="client-name" onclick="abrirHistoricoCliente('${item.id}')" title="${tooltipText}">${item.cliente}</span>
                     </td>
                     <td>
                         <div class="card-box-container" id="cardMaq-${globalIndex}">
