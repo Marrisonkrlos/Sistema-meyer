@@ -23,14 +23,20 @@
             --text-muted: #64748b; --border: #e2e8f0;
             --th-bg: #0f172a; --th-color: #ffffff;
             --tr-hover: #f8fafc;
+            --card-box-bg: #f1f5f9;
+            --badge-bg: #e2e8f0;
+            --badge-color: #1e293b;
         }
 
         body.dark-mode {
-            --primary: #60a5fa; --bg: #0f172a;
-            --card-bg: #1e293b; --form-bg: #0f172a;
+            --primary: #60a5fa; --bg: #0b1120;
+            --card-bg: #151e32; --form-bg: #0b1120;
             --text-main: #f8fafc; --text-muted: #94a3b8;
-            --border: #334155; --th-bg: #334155;
-            --th-color: #f8fafc; --tr-hover: #334155;
+            --border: #1e293b; --th-bg: #1e293b;
+            --th-color: #f8fafc; --tr-hover: #1e293b;
+            --card-box-bg: #0d1527;
+            --badge-bg: #1e293b;
+            --badge-color: #38bdf8;
         }
 
         body {
@@ -82,7 +88,7 @@
         .btn-login:hover { background-color: var(--accent-hover); }
 
         #telaApp {
-            width: 100%; max-width: 1200px; background: var(--card-bg);
+            width: 100%; max-width: 1250px; background: var(--card-bg);
             border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
             position: relative; margin-top: 40px; overflow: hidden; padding-top: 30px;
         }
@@ -103,7 +109,7 @@
         .nav-btn.btn-sair { color: var(--danger); }
         .nav-btn.btn-sair:hover { background: var(--danger); color: white; }
 
-        .app-content { padding: 15px 40px 30px 40px; }
+        .app-content { padding: 15px 30px 30px 30px; }
 
         h2 { text-align: center; color: var(--primary); font-size: 24px; margin-bottom: 20px; font-weight: 700; margin-top: 0; }
 
@@ -133,29 +139,106 @@
         #btnCancelar:hover { background-color: #64748b; }
 
         .table-container { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        th { background-color: var(--th-bg); color: var(--th-color); font-weight: 600; text-transform: uppercase; font-size: 12px; }
-        th:first-child { border-top-left-radius: 8px; }
-        th:last-child { border-top-right-radius: 8px; }
-        tr:hover td { background-color: var(--tr-hover); }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 12px; font-size: 14px; }
+        th { padding: 12px 14px; text-align: left; color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+        td { padding: 14px; text-align: left; vertical-align: middle; background-color: var(--card-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        td:first-child { border-left: 1px solid var(--border); border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+        td:last-child { border-right: 1px solid var(--border); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
 
-        .client-name { font-weight: 600; color: var(--primary); display: block; }
-        .client-date { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .client-name { font-weight: 700; color: var(--primary); font-size: 15px; display: block; line-height: 1.2; }
+        .client-date { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
-        .combo-box { display: flex; align-items: stretch; margin-top: 4px; width: 100%; min-width: 0; position: relative; }
-        .combo-box + .combo-box { margin-top: 8px; }
-        
-        .combo-input { 
-            flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-right: none; 
-            border-radius: 6px 0 0 6px; background-color: var(--card-bg); font-size: 13px; 
-            display: flex; align-items: center; gap: 6px; min-width: 0; 
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        /* ESTILOS DOS CARDS (SÉRIE, MÁQUINA, RESPONSÁVEL) */
+        .card-box-container {
+            background: var(--card-box-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            position: relative;
+            min-width: 200px;
         }
-        
-        .combo-select-wrapper { position: relative; width: 32px; border: 1px solid var(--border); border-radius: 0 6px 6px 0; background-color: var(--form-bg); flex-shrink: 0; }
-        .combo-arrow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; color: var(--text-muted); pointer-events: none; }
-        .combo-select { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; }
+
+        .card-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .card-row + .card-row {
+            margin-top: 8px;
+        }
+
+        .badge-serie {
+            background: var(--badge-bg);
+            color: var(--badge-color);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .btn-copy {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 2px 4px;
+            transition: color 0.2s;
+        }
+        .btn-copy:hover { color: var(--accent); }
+
+        .machine-title {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .person-name {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .phone-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .phone-link:hover { color: var(--accent); }
+
+        .select-card-trigger {
+            position: absolute;
+            top: 10px;
+            right: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .combo-select-card {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer; z-index: 10;
+        }
 
         .action-buttons { display: flex; gap: 8px; flex-wrap: nowrap; align-items: center; }
         .btn-whatsapp, .btn-excluir, .btn-editar { width: 34px; height: 34px; text-decoration: none; border-radius: 6px; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: none; flex-shrink: 0; color: white;}
@@ -174,7 +257,7 @@
             .theme-toggle { position: static; margin-bottom: 10px; width: 100%; justify-content: center; }
             body { padding-top: 10px; }
             #telaApp { margin-top: 10px; }
-            .app-content { padding: 20px; }
+            .app-content { padding: 15px; }
         }
     </style>
 </head>
@@ -187,7 +270,7 @@
 <div id="telaAuth">
     <img src="meyer.jpeg" alt="Meyer Tecnologia" class="logo-meyer" onerror="this.style.display='none'">
     
-    <!-- TELA 1: LOGIN -->
+    <!-- LOGIN -->
     <div id="sectionLogin">
         <h2>Entrar</h2>
         <form id="loginForm">
@@ -216,7 +299,7 @@
         <span class="link-acao" onclick="alternarFormularios('cadastro')">Criar uma nova conta</span>
     </div>
 
-    <!-- TELA 2: CRIAR CONTA -->
+    <!-- CRIAR CONTA -->
     <div id="sectionCadastro" class="hidden">
         <h2>Criar Conta</h2>
         <form id="cadastroAuthForm">
@@ -244,7 +327,7 @@
         <span class="link-acao" onclick="alternarFormularios('login')">Já tem uma conta? Voltar ao Login</span>
     </div>
 
-    <!-- TELA 3: SOLICITAR RECUPERAÇÃO DE SENHA -->
+    <!-- RECUPERAR SENHA -->
     <div id="sectionRecuperar" class="hidden">
         <h2>Recuperar Senha</h2>
         <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Informe o seu e-mail cadastrado para receber as instruções de redefinição.</p>
@@ -259,7 +342,7 @@
         <span class="link-acao" onclick="alternarFormularios('login')">Voltar ao Login</span>
     </div>
 
-    <!-- TELA 4: REDEFINIR SENHA (VIA LINK DO E-MAIL) -->
+    <!-- REDEFINIR SENHA VIA LINK -->
     <div id="sectionRedefinir" class="hidden">
         <h2>Redefinir Senha</h2>
         <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Digite sua nova senha abaixo.</p>
@@ -291,7 +374,7 @@
     </div>
 
     <div class="app-content">
-        <!-- ABA 1: FORMULÁRIO CLIENTE -->
+        <!-- ABA 1: FORMULÁRIO -->
         <div id="abaInicio">
             <h2>Cadastro de Cliente</h2>
             <form id="cadastroForm">
@@ -329,7 +412,7 @@
             </form>
         </div>
 
-        <!-- ABA 2: LISTAGEM -->
+        <!-- ABA 2: LISTAGEM COM CARDS E SELECTS -->
         <div id="abaContatos" class="hidden">
             <h2>Contatos Salvos</h2>
             <div class="table-container">
@@ -458,9 +541,17 @@
         setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
     }
 
+    window.copiarTexto = function(texto) {
+        if (!texto) return;
+        navigator.clipboard.writeText(texto).then(() => {
+            mostrarToast("Copiado para a área de transferência!");
+        }).catch(() => {
+            mostrarToast("Erro ao copiar.", "error");
+        });
+    }
+
     // --- AUTENTICAÇÃO E RECUPERAÇÃO DE SENHA ---
 
-    // Login
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault(); 
         const email = document.getElementById('emailLogin').value;
@@ -491,7 +582,6 @@
         }
     });
 
-    // Cadastro
     document.getElementById('cadastroAuthForm').addEventListener('submit', async function(e) {
         e.preventDefault(); 
         const email = document.getElementById('emailCadastro').value;
@@ -524,7 +614,6 @@
         }
     });
 
-    // Solicitar Recuperação de Senha (envia e-mail)
     document.getElementById('recuperarAuthForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const email = document.getElementById('emailRecuperar').value;
@@ -535,8 +624,6 @@
 
         try {
             btnRecuperar.textContent = "Enviando..."; btnRecuperar.disabled = true;
-            
-            // O Supabase enviará o e-mail de redefinição apontando para a página atual
             const { error } = await _supabase.auth.resetPasswordForEmail(email, {
                 redirectTo: window.location.href.split('#')[0]
             });
@@ -558,7 +645,6 @@
         }
     });
 
-    // Definir Nova Senha (após clicar no link enviado por e-mail)
     document.getElementById('redefinirAuthForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const novaSenha = document.getElementById('novaSenhaRedefinir').value;
@@ -588,7 +674,6 @@
         }
     });
 
-    // Alterar Senha estando logado no sistema
     document.getElementById('alterarSenhaForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const novaSenha = document.getElementById('novaSenhaLogado').value;
@@ -609,7 +694,7 @@
         }
     });
 
-    // --- LÓGICA DO CRUD ---
+    // --- LÓGICA DO CRUD E RENDERIZAÇÃO DA TABELA ---
     document.getElementById('contato').addEventListener('input', function(e) {
         let lines = e.target.value.split('\n');
         let maskedLines = lines.map(line => {
@@ -670,53 +755,51 @@
     }
 
     window.sincronizarTodos = function(rowIndex, selectedIndex) {
-        const prefixes = ['serie', 'modelo', 'responsavel', 'contato', 'local'];
-        
-        prefixes.forEach(prefix => {
-            const sel = document.getElementById(`${prefix}Select-${rowIndex}`);
-            const div = document.getElementById(`${prefix}Input-${rowIndex}`);
-            if (sel && div) {
-                sel.value = selectedIndex; 
-                let text = sel.options[sel.selectedIndex]?.text || '';
-                let iconHtml = prefix === 'contato' ? '<i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 15px;"></i> ' : '';
-                let prefixHtml = prefix === 'serie' ? 'Série: ' : '';
-                div.innerHTML = `${iconHtml}${prefixHtml}${text}`;
-            }
-        });
+        const item = cadastros[rowIndex];
+        if (!item) return;
+
+        let arrSeries = (item.serie || '').split('\n').filter(s => s.trim() !== '');
+        let arrModelos = (item.modelo || '').split('\n').filter(m => m.trim() !== '');
+        let arrResponsaveis = (item.responsavel || '').split('\n').filter(r => r.trim() !== '');
+        let arrContatos = (item.contato || '').split('\n').filter(c => c.trim() !== '');
+        let arrLocais = item.local ? item.local.split('\n').filter(l => l.trim() !== '') : [];
+
+        const maxLines = Math.max(arrSeries.length, arrModelos.length, arrResponsaveis.length, arrContatos.length, arrLocais.length);
+
+        const getVal = (arr, idx) => arr[idx] || arr[arr.length - 1] || '';
+
+        const sVal = getVal(arrSeries, selectedIndex);
+        const mVal = getVal(arrModelos, selectedIndex);
+        const rVal = getVal(arrResponsaveis, selectedIndex);
+        const cVal = getVal(arrContatos, selectedIndex);
+        const lVal = getVal(arrLocais, selectedIndex);
+
+        // Atualizar textos dos Cards
+        const cardMaq = document.getElementById(`cardMaq-${rowIndex}`);
+        if (cardMaq) {
+            cardMaq.querySelector('.badge-text').textContent = `Série: ${sVal}`;
+            cardMaq.querySelector('.badge-copy-btn').setAttribute('onclick', `copiarTexto('${sVal}')`);
+            cardMaq.querySelector('.machine-title span').textContent = mVal;
+            cardMaq.querySelector('.machine-copy-btn').setAttribute('onclick', `copiarTexto('${mVal}')`);
+        }
+
+        const cardResp = document.getElementById(`cardResp-${rowIndex}`);
+        if (cardResp) {
+            cardResp.querySelector('.person-name span').textContent = rVal;
+            cardResp.querySelector('.phone-link span').textContent = cVal;
+            cardResp.querySelector('.phone-link').setAttribute('href', `https://wa.me/55${cVal.replace(/\D/g, '')}`);
+        }
+
+        const cardLocal = document.getElementById(`cardLocal-${rowIndex}`);
+        if (cardLocal) {
+            cardLocal.querySelector('.local-text').textContent = lVal;
+        }
 
         const btnWpp = document.getElementById(`btnWpp-${rowIndex}`);
         if (btnWpp) {
-            btnWpp.href = gerarLinkWhatsapp(cadastros[rowIndex], selectedIndex);
+            btnWpp.href = gerarLinkWhatsapp(item, selectedIndex);
         }
     };
-
-    function createComboOrText(arr, idPrefix, index, isSerie = false, isContato = false) {
-        if (!arr || arr.length === 0 || (arr.length === 1 && arr[0] === '')) return '-'; 
-        
-        let iconHtml = isContato ? '<i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 15px;"></i> ' : '';
-        let prefixHtml = isSerie ? 'Série: ' : '';
-
-        if (arr.length <= 1) {
-            let val = arr[0] || '';
-            if (isSerie) return `<div style="font-weight:400; color:var(--text-muted); margin-bottom:4px;">${prefixHtml}${val}</div>`;
-            if (isContato) return `<div style="font-weight:400; color:var(--text-muted); margin-top:4px; display:flex; align-items:center; gap:6px;">${iconHtml}${val}</div>`;
-            return `<div style="font-weight:600; color:var(--primary);">${val}</div>`;
-        }
-        
-        let options = arr.map((item, i) => `<option value="${i}">${item}</option>`).join('');
-        let displayVal = `${iconHtml}${prefixHtml}${arr[0]}`;
-        let extraStyle = (isSerie || isContato) ? 'font-weight:400; color:var(--text-muted);' : 'font-weight:600; color:var(--primary);';
-        
-        return `<div class="combo-box">
-            <div id="${idPrefix}Input-${index}" class="combo-input" style="${extraStyle}">${displayVal}</div>
-            <div class="combo-select-wrapper">
-                <i class="fa-solid fa-chevron-down combo-arrow"></i>
-            </div>
-            <select id="${idPrefix}Select-${index}" class="combo-select" onchange="sincronizarTodos(${index}, this.value)">
-                ${options}
-            </select>
-        </div>`;
-    }
 
     async function renderizarTabela() {
         const tabelaCorpo = document.getElementById('tabelaCorpo');
@@ -740,18 +823,6 @@
 
             let maxLines = Math.max(arrSeries.length, arrModelos.length, arrResponsaveis.length, arrContatos.length, arrLocais.length);
             
-            const normalizeArr = (arr, max) => {
-                let res = [...arr];
-                while (res.length > 0 && res.length < max) { res.push(res[res.length - 1]); }
-                return res;
-            };
-
-            arrSeries = normalizeArr(arrSeries, maxLines);
-            arrModelos = normalizeArr(arrModelos, maxLines);
-            arrResponsaveis = normalizeArr(arrResponsaveis, maxLines);
-            arrContatos = normalizeArr(arrContatos, maxLines);
-            arrLocais = normalizeArr(arrLocais, maxLines);
-
             const linkWhatsapp = gerarLinkWhatsapp(item, 0);
             const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : '-';
             
@@ -760,6 +831,26 @@
                 autorInfo = ` por ${item.modificado_por.split('@')[0]}`;
             }
 
+            const sInicial = arrSeries[0] || '';
+            const mInicial = arrModelos[0] || '';
+            const rInicial = arrResponsaveis[0] || '';
+            const cInicial = arrContatos[0] || '';
+            const lInicial = arrLocais[0] || '';
+
+            // Opções do Select
+            let options = '';
+            if (maxLines > 1) {
+                for(let i=0; i<maxLines; i++) {
+                    let lblM = arrModelos[i] || arrModelos[arrModelos.length-1] || `Opção ${i+1}`;
+                    options += `<option value="${i}">${lblM}</option>`;
+                }
+            }
+
+            const selectHtml = maxLines > 1 ? `
+                <button class="select-card-trigger"><i class="fa-solid fa-chevron-down"></i></button>
+                <select class="combo-select-card" onchange="sincronizarTodos(${index}, this.value)">${options}</select>
+            ` : '';
+
             tabelaCorpo.innerHTML += `
                 <tr>
                     <td>
@@ -767,15 +858,46 @@
                         <div class="client-date">Atualizado: ${dataFormatada}${autorInfo}</div>
                     </td>
                     <td>
-                        ${createComboOrText(arrSeries, 'serie', index, true, false)}
-                        ${createComboOrText(arrModelos, 'modelo', index, false, false)}
+                        <div class="card-box-container" id="cardMaq-${index}">
+                            ${selectHtml}
+                            <div class="card-row">
+                                <span class="badge-serie">
+                                    <i class="fa-solid fa-barcode"></i> <span class="badge-text">Série: ${sInicial}</span>
+                                </span>
+                                <button class="btn-copy badge-copy-btn" onclick="copiarTexto('${sInicial}')" title="Copiar Série"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <div class="card-row" style="margin-top: 10px;">
+                                <div class="machine-title">
+                                    <span>${mInicial}</span>
+                                    <button class="btn-copy machine-copy-btn" onclick="copiarTexto('${mInicial}')" title="Copiar Modelo"><i class="fa-regular fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                     <td>
-                        ${createComboOrText(arrResponsaveis, 'responsavel', index, false, false)}
-                        ${createComboOrText(arrContatos, 'contato', index, false, true)}
+                        <div class="card-box-container" id="cardResp-${index}">
+                            ${selectHtml}
+                            <div class="card-row">
+                                <div class="person-name">
+                                    <i class="fa-regular fa-user" style="color: var(--text-muted);"></i>
+                                    <span>${rInicial}</span>
+                                </div>
+                            </div>
+                            <div class="card-row" style="margin-top: 8px;">
+                                <a href="https://wa.me/55${cInicial.replace(/\D/g, '')}" target="_blank" class="phone-link">
+                                    <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i>
+                                    <span>${cInicial}</span>
+                                </a>
+                            </div>
+                        </div>
                     </td>
                     <td>
-                        ${createComboOrText(arrLocais, 'local', index, false, false)}
+                        <div class="card-box-container" id="cardLocal-${index}" style="min-width: 140px;">
+                            ${selectHtml}
+                            <div class="card-row">
+                                <span class="local-text" style="font-weight: 600; color: var(--primary); font-size: 13px;">${lInicial || '-'}</span>
+                            </div>
+                        </div>
                     </td>
                     <td>
                         <div class="action-buttons">
@@ -874,10 +996,8 @@
         document.getElementById('lembrarEmail').checked = true;
     }
 
-    // Monitora alterações no estado da sessão (ex: quando o usuário clica no link do e-mail de recuperação)
     _supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'PASSWORD_RECOVERY') {
-            // Se o usuário acessou o site através de um link de recuperação de senha
             telaApp.classList.add('hidden');
             telaAuth.classList.remove('hidden');
             alternarFormularios('redefinir');
