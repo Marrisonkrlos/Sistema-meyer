@@ -146,19 +146,23 @@
         td:last-child { border-right: 1px solid var(--border); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
 
         .client-name { font-weight: 700; color: var(--primary); font-size: 15px; display: block; line-height: 1.2; }
-        .client-date { font-size: 11px; color: var(--text-muted); margin-top: 6px; position: relative; cursor: pointer; }
         
-        /* HOVER PARA MOSTRAR QUEM MODIFICOU */
-        .user-mod-info {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.2s ease;
+        /* DATA DE ATUALIZAÇÃO OCULTA COM REVELAÇÃO NO HOVER */
+        .client-date-hover {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            cursor: pointer;
+            display: inline-block;
+            transition: color 0.2s;
         }
-        .client-date:hover .user-mod-info {
-            display: inline;
-            opacity: 1;
+        .client-date-details {
+            display: none;
             color: var(--accent);
             font-weight: 600;
+        }
+        .client-date-hover:hover .client-date-details {
+            display: inline;
         }
 
         /* ESTILOS DOS CARDS (SÉRIE, MÁQUINA, RESPONSÁVEL) */
@@ -839,13 +843,15 @@
             let maxLines = Math.max(arrSeries.length, arrModelos.length, arrResponsaveis.length, arrContatos.length, arrLocais.length);
             
             const linkWhatsapp = gerarLinkWhatsapp(item, 0);
-            const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : '-';
+            const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : '';
             
-            // QUEM MODIFICOU (SÓ APARECE AO PASSAR O MOUSE)
+            // MONTAGEM DA INFORMAÇÃO OCULTA (DATA, HORA E USUÁRIO APARECEM NO HOVER)
             let autorInfo = '';
             if (isAdm && item.modificado_por) {
-                autorInfo = `<span class="user-mod-info"> por ${item.modificado_por.split('@')[0]}</span>`;
+                autorInfo = ` por ${item.modificado_por.split('@')[0]}`;
             }
+
+            const textoDetalhado = dataFormatada ? `${dataFormatada}${autorInfo}` : 'Sem registros';
 
             const sInicial = arrSeries[0] || '';
             const mInicial = arrModelos[0] || '';
@@ -871,7 +877,9 @@
                 <tr>
                     <td>
                         <span class="client-name">${item.cliente}</span>
-                        <div class="client-date">Atualizado: ${dataFormatada}${autorInfo}</div>
+                        <div class="client-date-hover">
+                            Atualizado: <span class="client-date-details">${textoDetalhado}</span>
+                        </div>
                     </td>
                     <td>
                         <div class="card-box-container" id="cardMaq-${index}">
