@@ -22,19 +22,15 @@
             --form-bg: #f1f5f9; --text-main: #334155;
             --text-muted: #64748b; --border: #e2e8f0;
             --th-bg: #0f172a; --th-color: #ffffff;
-            --tr-hover: #f1f5f9;
-            --badge-bg: #e2e8f0; --badge-text: #0f172a;
-            --card-select-bg: #ffffff;
+            --tr-hover: #f8fafc;
         }
 
         body.dark-mode {
             --primary: #60a5fa; --bg: #0f172a;
             --card-bg: #1e293b; --form-bg: #0f172a;
             --text-main: #f8fafc; --text-muted: #94a3b8;
-            --border: #334155; --th-bg: #0f172a;
-            --th-color: #f8fafc; --tr-hover: #1e293b;
-            --badge-bg: #334155; --badge-text: #f8fafc;
-            --card-select-bg: #0f172a;
+            --border: #334155; --th-bg: #334155;
+            --th-color: #f8fafc; --tr-hover: #334155;
         }
 
         body {
@@ -64,14 +60,14 @@
             text-align: center; margin: auto; 
         }
 
-        #loginForm, #cadastroAuthForm { display: flex; flex-direction: column; }
+        #loginForm, #cadastroAuthForm, #recuperarAuthForm, #redefinirAuthForm, #alterarSenhaForm { display: flex; flex-direction: column; }
         
         .password-wrapper { position: relative; display: flex; align-items: center; }
         .password-wrapper input { width: 100%; padding-right: 40px; }
         .toggle-password { position: absolute; right: 12px; cursor: pointer; color: var(--text-muted); font-size: 16px; transition: color 0.2s; }
         .toggle-password:hover { color: var(--primary); }
         
-        .form-options { display: flex; justify-content: flex-start; align-items: center; margin-bottom: 15px; }
+        .form-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .checkbox-label { font-weight: 500; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; cursor: pointer; flex-direction: row; justify-content: flex-start;}
         .checkbox-label input { width: auto; margin: 0; cursor: pointer; }
 
@@ -79,7 +75,7 @@
         .error, .error-msg { color: var(--danger); }
         .success { color: var(--success); }
         
-        .link-acao { display: inline-block; margin-top: 20px; color: var(--text-muted); text-decoration: none; font-size: 14px; cursor: pointer; }
+        .link-acao { display: inline-block; margin-top: 15px; color: var(--text-muted); text-decoration: none; font-size: 13px; cursor: pointer; }
         .link-acao:hover { color: var(--accent); text-decoration: underline; }
 
         .btn-login { width: 100%; padding: 14px; background-color: var(--accent); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; transition: background-color 0.2s; margin-top: 10px; }
@@ -107,14 +103,16 @@
         .nav-btn.btn-sair { color: var(--danger); }
         .nav-btn.btn-sair:hover { background: var(--danger); color: white; }
 
-        .app-content { padding: 15px 20px 30px 20px; }
+        .app-content { padding: 15px 40px 30px 40px; }
 
         h2 { text-align: center; color: var(--primary); font-size: 24px; margin-bottom: 20px; font-weight: 700; margin-top: 0; }
 
-        #cadastroForm {
+        #cadastroForm, #alterarSenhaForm {
             display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
             background: var(--bg); padding: 24px; border-radius: 8px; border: 1px solid var(--border);
         }
+
+        #alterarSenhaForm { max-width: 500px; margin: 0 auto; grid-template-columns: 1fr; }
 
         .form-group { display: flex; flex-direction: column; text-align: left; margin-bottom: 15px; }
         label { margin-bottom: 8px; font-weight: 600; font-size: 14px; color: var(--primary); display: flex; justify-content: space-between; }
@@ -134,183 +132,38 @@
         #btnCancelar { background-color: #94a3b8; display: none; }
         #btnCancelar:hover { background-color: #64748b; }
 
-        .table-container { width: 100%; overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-        th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        th { background-color: var(--th-bg); color: var(--th-color); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        th { background-color: var(--th-bg); color: var(--th-color); font-weight: 600; text-transform: uppercase; font-size: 12px; }
         th:first-child { border-top-left-radius: 8px; }
         th:last-child { border-top-right-radius: 8px; }
         tr:hover td { background-color: var(--tr-hover); }
 
-        /* Definição de Larguras das Colunas */
-        th.col-cliente { width: 22%; }
-        th.col-equip { width: 33%; }
-        th.col-resp { width: 23%; }
-        th.col-local { width: 12%; }
-        th.col-acoes { width: 10%; }
+        .client-name { font-weight: 600; color: var(--primary); display: block; }
+        .client-date { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
-        .client-name-container {
-            position: relative;
-            display: block;
-            width: 100%;
-        }
-        .client-name { 
-            font-weight: 700; 
-            color: var(--primary); 
-            font-size: 13px; 
-            white-space: normal;
-            word-break: break-word;
-            display: block;
-            cursor: pointer;
-        }
-
-        /* Tooltip Customizado */
-        .tooltip-box {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            max-width: 100%;
-        }
-        .tooltip-box .tooltip-text {
-            visibility: hidden;
-            opacity: 0;
-            width: max-content;
-            max-width: 260px;
-            background-color: #0f172a;
-            color: #f8fafc;
-            text-align: left;
-            border-radius: 6px;
-            padding: 8px 12px;
-            position: absolute;
-            z-index: 100;
-            bottom: 125%;
-            left: 0;
-            font-size: 12px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            border: 1px solid #334155;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-            white-space: normal;
-            pointer-events: none;
-        }
-        .tooltip-box:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Cards de Seleção */
-        .combo-card {
-            position: relative;
-            background-color: var(--card-select-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            width: 100%;
-            transition: all 0.2s ease;
-        }
-        .combo-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
-        }
-        .combo-card-content {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        /* Botão de Copiar */
-        .btn-copy {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 11px;
-            padding: 2px 4px;
-            border-radius: 4px;
-            transition: all 0.2s;
-            z-index: 10;
-            display: inline-flex;
-            align-items: center;
-        }
-        .btn-copy:hover {
-            color: var(--accent);
-            background: rgba(37, 99, 235, 0.1);
+        .combo-box { display: flex; align-items: stretch; margin-top: 4px; width: 100%; min-width: 0; position: relative; }
+        .combo-box + .combo-box { margin-top: 8px; }
+        
+        .combo-input { 
+            flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-right: none; 
+            border-radius: 6px 0 0 6px; background-color: var(--card-bg); font-size: 13px; 
+            display: flex; align-items: center; gap: 6px; min-width: 0; 
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
         
-        /* Número de Série em Evidência */
-        .serial-badge-prominent {
-            font-family: monospace;
-            font-size: 12px;
-            font-weight: 700;
-            background: rgba(37, 99, 235, 0.12);
-            color: var(--accent);
-            border: 1px solid rgba(37, 99, 235, 0.25);
-            padding: 2px 6px;
-            border-radius: 5px;
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+        .combo-select-wrapper { position: relative; width: 32px; border: 1px solid var(--border); border-radius: 0 6px 6px 0; background-color: var(--form-bg); flex-shrink: 0; }
+        .combo-arrow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; color: var(--text-muted); pointer-events: none; }
+        .combo-select { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; }
 
-        .combo-card-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 6px;
-            width: 100%;
-        }
-
-        .combo-card-title-text {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: fit-content;
-        }
-
-        .location-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: var(--badge-bg);
-            color: var(--badge-text);
-            padding: 4px 8px;
-            border-radius: 16px;
-            font-size: 11px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-        }
-
-        .combo-card select {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0; cursor: pointer; z-index: 5;
-        }
-
-        .action-buttons { display: flex; gap: 4px; flex-wrap: nowrap; align-items: center; justify-content: flex-end; }
-        .btn-whatsapp, .btn-excluir, .btn-editar { width: 30px; height: 30px; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: none; flex-shrink: 0; color: white; transition: transform 0.1s;}
-        .btn-whatsapp:hover, .btn-excluir:hover, .btn-editar:hover { transform: scale(1.05); }
+        .action-buttons { display: flex; gap: 8px; flex-wrap: nowrap; align-items: center; }
+        .btn-whatsapp, .btn-excluir, .btn-editar { width: 34px; height: 34px; text-decoration: none; border-radius: 6px; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: none; flex-shrink: 0; color: white;}
         .btn-whatsapp { background-color: var(--success); }
         .btn-editar { background-color: var(--warning); }
         .btn-excluir { background-color: var(--danger); }
 
-        #toast { visibility: hidden; min-width: 250px; background-color: var(--success); color: #fff; text-align: center; border-radius: 8px; padding: 14px; position: fixed; z-index: 1000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 14px; font-weight: 600; opacity: 0; transition: opacity 0.3s, top 0.3s; }
+        #toast { visibility: hidden; min-width: 250px; background-color: var(--success); color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 15px; font-weight: 600; opacity: 0; transition: opacity 0.3s, top 0.3s; }
         #toast.show { visibility: visible; opacity: 1; top: 50px; }
 
         @media (max-width: 768px) {
@@ -321,9 +174,7 @@
             .theme-toggle { position: static; margin-bottom: 10px; width: 100%; justify-content: center; }
             body { padding-top: 10px; }
             #telaApp { margin-top: 10px; }
-            .app-content { padding: 10px; }
-            .table-container { overflow-x: auto; }
-            table { table-layout: auto; }
+            .app-content { padding: 20px; }
         }
     </style>
 </head>
@@ -332,10 +183,11 @@
 <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Modo Escuro</button>
 <div id="toast">Operação realizada com sucesso!</div>
 
-<!-- TELA DE LOGIN E CADASTRO DE USUÁRIO -->
+<!-- TELA DE AUTENTICAÇÃO -->
 <div id="telaAuth">
     <img src="meyer.jpeg" alt="Meyer Tecnologia" class="logo-meyer" onerror="this.style.display='none'">
     
+    <!-- TELA 1: LOGIN -->
     <div id="sectionLogin">
         <h2>Entrar</h2>
         <form id="loginForm">
@@ -353,8 +205,9 @@
             
             <div class="form-options">
                 <label class="checkbox-label">
-                    <input type="checkbox" id="lembrarEmail"> Lembrar meu e-mail
+                    <input type="checkbox" id="lembrarEmail"> Lembrar e-mail
                 </label>
+                <span class="link-acao" style="margin-top:0;" onclick="alternarFormularios('recuperar')">Esqueceu a senha?</span>
             </div>
 
             <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
@@ -363,6 +216,7 @@
         <span class="link-acao" onclick="alternarFormularios('cadastro')">Criar uma nova conta</span>
     </div>
 
+    <!-- TELA 2: CRIAR CONTA -->
     <div id="sectionCadastro" class="hidden">
         <h2>Criar Conta</h2>
         <form id="cadastroAuthForm">
@@ -389,6 +243,38 @@
         </form>
         <span class="link-acao" onclick="alternarFormularios('login')">Já tem uma conta? Voltar ao Login</span>
     </div>
+
+    <!-- TELA 3: SOLICITAR RECUPERAÇÃO DE SENHA -->
+    <div id="sectionRecuperar" class="hidden">
+        <h2>Recuperar Senha</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Informe o seu e-mail cadastrado para receber as instruções de redefinição.</p>
+        <form id="recuperarAuthForm">
+            <div class="form-group">
+                <label for="emailRecuperar">E-mail</label>
+                <input type="email" id="emailRecuperar" required placeholder="Digite seu e-mail">
+            </div>
+            <button type="submit" class="btn-login" id="btnRecuperar">Enviar Link de Recuperação</button>
+            <div id="statusMsgRecuperar" class="status-msg"></div>
+        </form>
+        <span class="link-acao" onclick="alternarFormularios('login')">Voltar ao Login</span>
+    </div>
+
+    <!-- TELA 4: REDEFINIR SENHA (VIA LINK DO E-MAIL) -->
+    <div id="sectionRedefinir" class="hidden">
+        <h2>Redefinir Senha</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Digite sua nova senha abaixo.</p>
+        <form id="redefinirAuthForm">
+            <div class="form-group">
+                <label for="novaSenhaRedefinir">Nova Senha</label>
+                <div class="password-wrapper">
+                    <input type="password" id="novaSenhaRedefinir" required placeholder="Mínimo 6 caracteres" minlength="6">
+                    <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('novaSenhaRedefinir', this)"></i>
+                </div>
+            </div>
+            <button type="submit" class="btn-login" id="btnRedefinir">Salvar Nova Senha</button>
+            <div id="statusMsgRedefinir" class="status-msg"></div>
+        </form>
+    </div>
 </div>
 
 <!-- TELA PRINCIPAL -->
@@ -399,12 +285,13 @@
         <div class="nav-menu">
             <button class="nav-btn active" id="btnNavInicio" onclick="mudarAba('inicio')"><i class="fa-solid fa-house"></i> Início</button>
             <button class="nav-btn" id="btnNavContatos" onclick="mudarAba('contatos')"><i class="fa-solid fa-address-book"></i> Contatos</button>
+            <button class="nav-btn" id="btnNavConta" onclick="mudarAba('conta')"><i class="fa-solid fa-key"></i> Minha Senha</button>
             <button class="nav-btn btn-sair" onclick="fazerLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
         </div>
     </div>
 
     <div class="app-content">
-        <!-- ABA 1: FORMULÁRIO -->
+        <!-- ABA 1: FORMULÁRIO CLIENTE -->
         <div id="abaInicio">
             <h2>Cadastro de Cliente</h2>
             <form id="cadastroForm">
@@ -449,16 +336,31 @@
                 <table>
                     <thead>
                         <tr>
-                            <th class="col-cliente">Cliente</th>
-                            <th class="col-equip">Nº de Série / Modelo</th>
-                            <th class="col-resp">Responsável / Contato</th>
-                            <th class="col-local">Localização</th>
-                            <th class="col-acoes">Ações</th>
+                            <th>Cliente</th>
+                            <th>Série e Máquina</th>
+                            <th>Responsável e Contato</th>
+                            <th>Local</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaCorpo"></tbody>
                 </table>
             </div>
+        </div>
+
+        <!-- ABA 3: ALTERAR SENHA LOGADO -->
+        <div id="abaConta" class="hidden">
+            <h2>Alterar Minha Senha</h2>
+            <form id="alterarSenhaForm">
+                <div class="form-group">
+                    <label for="novaSenhaLogado">Nova Senha</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="novaSenhaLogado" required placeholder="Mínimo 6 caracteres" minlength="6">
+                        <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('novaSenhaLogado', this)"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login" id="btnAlterarSenha">Atualizar Senha</button>
+            </form>
         </div>
     </div>
 </div>
@@ -507,6 +409,8 @@
     function alternarFormularios(alvo) {
         document.getElementById('sectionLogin').classList.toggle('hidden', alvo !== 'login');
         document.getElementById('sectionCadastro').classList.toggle('hidden', alvo !== 'cadastro');
+        document.getElementById('sectionRecuperar').classList.toggle('hidden', alvo !== 'recuperar');
+        document.getElementById('sectionRedefinir').classList.toggle('hidden', alvo !== 'redefinir');
     }
 
     function mostrarApp() {
@@ -527,8 +431,11 @@
     window.mudarAba = function(aba) {
         document.getElementById('abaInicio').classList.add('hidden');
         document.getElementById('abaContatos').classList.add('hidden');
+        document.getElementById('abaConta').classList.add('hidden');
+        
         document.getElementById('btnNavInicio').classList.remove('active');
         document.getElementById('btnNavContatos').classList.remove('active');
+        document.getElementById('btnNavConta').classList.remove('active');
 
         if (aba === 'inicio') {
             document.getElementById('abaInicio').classList.remove('hidden');
@@ -537,6 +444,9 @@
             document.getElementById('abaContatos').classList.remove('hidden');
             document.getElementById('btnNavContatos').classList.add('active');
             carregarERenderizar();
+        } else if (aba === 'conta') {
+            document.getElementById('abaConta').classList.remove('hidden');
+            document.getElementById('btnNavConta').classList.add('active');
         }
     };
 
@@ -548,17 +458,9 @@
         setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
     }
 
-    window.copiarTexto = function(event, texto, tipo) {
-        event.stopPropagation();
-        if(!texto || texto === '-') return;
-        navigator.clipboard.writeText(texto).then(() => {
-            mostrarToast(`${tipo} copiado!`);
-        }).catch(() => {
-            mostrarToast("Erro ao copiar.", "error");
-        });
-    };
+    // --- AUTENTICAÇÃO E RECUPERAÇÃO DE SENHA ---
 
-    // AUTHENTICATION
+    // Login
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault(); 
         const email = document.getElementById('emailLogin').value;
@@ -589,6 +491,7 @@
         }
     });
 
+    // Cadastro
     document.getElementById('cadastroAuthForm').addEventListener('submit', async function(e) {
         e.preventDefault(); 
         const email = document.getElementById('emailCadastro').value;
@@ -621,7 +524,92 @@
         }
     });
 
-    // LÓGICA DO CRUD
+    // Solicitar Recuperação de Senha (envia e-mail)
+    document.getElementById('recuperarAuthForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('emailRecuperar').value;
+        const btnRecuperar = document.getElementById('btnRecuperar');
+        const statusMsg = document.getElementById('statusMsgRecuperar');
+
+        const showMsg = (texto, tipo) => { statusMsg.textContent = texto; statusMsg.className = `status-msg ${tipo}`; statusMsg.style.display = 'block'; };
+
+        try {
+            btnRecuperar.textContent = "Enviando..."; btnRecuperar.disabled = true;
+            
+            // O Supabase enviará o e-mail de redefinição apontando para a página atual
+            const { error } = await _supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.href.split('#')[0]
+            });
+
+            if (error) throw error;
+
+            showMsg("E-mail enviado! Verifique sua caixa de entrada.", "success");
+            setTimeout(() => {
+                alternarFormularios('login');
+                btnRecuperar.textContent = "Enviar Link de Recuperação";
+                btnRecuperar.disabled = false;
+                statusMsg.style.display = 'none';
+            }, 4000);
+
+        } catch (erro) {
+            showMsg(erro.message || "Erro ao enviar e-mail.", "error");
+            btnRecuperar.textContent = "Enviar Link de Recuperação";
+            btnRecuperar.disabled = false;
+        }
+    });
+
+    // Definir Nova Senha (após clicar no link enviado por e-mail)
+    document.getElementById('redefinirAuthForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const novaSenha = document.getElementById('novaSenhaRedefinir').value;
+        const btnRedefinir = document.getElementById('btnRedefinir');
+        const statusMsg = document.getElementById('statusMsgRedefinir');
+
+        const showMsg = (texto, tipo) => { statusMsg.textContent = texto; statusMsg.className = `status-msg ${tipo}`; statusMsg.style.display = 'block'; };
+
+        try {
+            btnRedefinir.textContent = "Salvando..."; btnRedefinir.disabled = true;
+            const { error } = await _supabase.auth.updateUser({ password: novaSenha });
+
+            if (error) throw error;
+
+            showMsg("Senha atualizada com sucesso!", "success");
+            setTimeout(() => {
+                btnRedefinir.textContent = "Salvar Nova Senha";
+                btnRedefinir.disabled = false;
+                statusMsg.style.display = 'none';
+                mostrarApp();
+            }, 2000);
+
+        } catch (erro) {
+            showMsg(erro.message || "Erro ao atualizar senha.", "error");
+            btnRedefinir.textContent = "Salvar Nova Senha";
+            btnRedefinir.disabled = false;
+        }
+    });
+
+    // Alterar Senha estando logado no sistema
+    document.getElementById('alterarSenhaForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const novaSenha = document.getElementById('novaSenhaLogado').value;
+        const btn = document.getElementById('btnAlterarSenha');
+
+        try {
+            btn.textContent = "Atualizando..."; btn.disabled = true;
+            const { error } = await _supabase.auth.updateUser({ password: novaSenha });
+
+            if (error) throw error;
+
+            mostrarToast("Senha alterada com sucesso!");
+            document.getElementById('novaSenhaLogado').value = '';
+            btn.textContent = "Atualizar Senha"; btn.disabled = false;
+        } catch (erro) {
+            mostrarToast(erro.message || "Erro ao alterar a senha.", "error");
+            btn.textContent = "Atualizar Senha"; btn.disabled = false;
+        }
+    });
+
+    // --- LÓGICA DO CRUD ---
     document.getElementById('contato').addEventListener('input', function(e) {
         let lines = e.target.value.split('\n');
         let maskedLines = lines.map(line => {
@@ -645,7 +633,6 @@
             return;
         }
         
-        // Ordenação por ordem numérica/decimal do código do cliente
         cadastros = (data || []).sort((a, b) => {
             const clienteA = a.cliente || '';
             const clienteB = b.cliente || '';
@@ -683,126 +670,51 @@
     }
 
     window.sincronizarTodos = function(rowIndex, selectedIndex) {
-        const cadastro = cadastros[rowIndex];
-        if (!cadastro) return;
-
-        ['equipamento', 'responsavel', 'local'].forEach(type => {
-            const sel = document.getElementById(`${type}Select-${rowIndex}`);
-            if (sel) sel.value = selectedIndex;
+        const prefixes = ['serie', 'modelo', 'responsavel', 'contato', 'local'];
+        
+        prefixes.forEach(prefix => {
+            const sel = document.getElementById(`${prefix}Select-${rowIndex}`);
+            const div = document.getElementById(`${prefix}Input-${rowIndex}`);
+            if (sel && div) {
+                sel.value = selectedIndex; 
+                let text = sel.options[sel.selectedIndex]?.text || '';
+                let iconHtml = prefix === 'contato' ? '<i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 15px;"></i> ' : '';
+                let prefixHtml = prefix === 'serie' ? 'Série: ' : '';
+                div.innerHTML = `${iconHtml}${prefixHtml}${text}`;
+            }
         });
-
-        // Atualização visual das tags/textos no card
-        const arrSeries = (cadastro.serie || '').split('\n').filter(s => s.trim() !== '');
-        const arrModelos = (cadastro.modelo || '').split('\n').filter(m => m.trim() !== '');
-        const arrResponsaveis = (cadastro.responsavel || '').split('\n').filter(r => r.trim() !== '');
-        const arrContatos = (cadastro.contato || '').split('\n').filter(c => c.trim() !== '');
-        const arrLocais = cadastro.local ? cadastro.local.split('\n').filter(l => l.trim() !== '') : [];
-
-        const index = parseInt(selectedIndex);
-
-        const elemModelo = document.getElementById(`modeloTxt-${rowIndex}`);
-        if (elemModelo) elemModelo.textContent = arrModelos[index] || arrModelos[0] || '-';
-
-        const elemSerie = document.getElementById(`serieTxt-${rowIndex}`);
-        if (elemSerie) elemSerie.textContent = arrSeries[index] || arrSeries[0] || '-';
-
-        // Atualiza botões de cópia
-        const btnCopySerie = document.getElementById(`btnCopySerie-${rowIndex}`);
-        if (btnCopySerie) btnCopySerie.setAttribute('onclick', `copiarTexto(event, '${arrSeries[index] || arrSeries[0]}', 'Número de série')`);
-
-        const btnCopyModelo = document.getElementById(`btnCopyModelo-${rowIndex}`);
-        if (btnCopyModelo) btnCopyModelo.setAttribute('onclick', `copiarTexto(event, '${arrModelos[index] || arrModelos[0]}', 'Modelo')`);
-
-        const elemBadgeContainer = document.getElementById(`serieBadgeContainer-${rowIndex}`);
-        if (elemBadgeContainer) {
-            const mod = arrModelos[index] || arrModelos[0] || '-';
-            elemBadgeContainer.setAttribute('title', `Modelo: ${mod}`);
-            const tText = elemBadgeContainer.querySelector('.tooltip-text');
-            if (tText) tText.innerHTML = `<i class="fa-solid fa-print"></i> <strong>Modelo:</strong> ${mod}`;
-        }
-
-        const elemResp = document.getElementById(`respTxt-${rowIndex}`);
-        if (elemResp) elemResp.textContent = arrResponsaveis[index] || arrResponsaveis[0] || '-';
-
-        const elemContato = document.getElementById(`contatoTxt-${rowIndex}`);
-        if (elemContato) elemContato.innerHTML = `<i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> ${arrContatos[index] || arrContatos[0] || '-'}`;
-
-        const elemLocal = document.getElementById(`localTxt-${rowIndex}`);
-        if (elemLocal) elemLocal.innerHTML = `<i class="fa-solid fa-location-dot" style="color: var(--accent);"></i> ${arrLocais[index] || arrLocais[0] || '-'}`;
 
         const btnWpp = document.getElementById(`btnWpp-${rowIndex}`);
         if (btnWpp) {
-            btnWpp.href = gerarLinkWhatsapp(cadastro, index);
+            btnWpp.href = gerarLinkWhatsapp(cadastros[rowIndex], selectedIndex);
         }
     };
 
-    function renderCardEquipamento(arrModelos, arrSeries, index) {
-        const hasMultiple = arrModelos.length > 1;
-        const arrowHtml = hasMultiple ? '<i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted); flex-shrink: 0;"></i>' : '';
-        const options = arrModelos.map((item, i) => `<option value="${i}">Série: ${arrSeries[i] || '-'} (${item})</option>`).join('');
+    function createComboOrText(arr, idPrefix, index, isSerie = false, isContato = false) {
+        if (!arr || arr.length === 0 || (arr.length === 1 && arr[0] === '')) return '-'; 
+        
+        let iconHtml = isContato ? '<i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 15px;"></i> ' : '';
+        let prefixHtml = isSerie ? 'Série: ' : '';
 
-        const serieAtual = arrSeries[0] || '-';
-        const modeloAtual = arrModelos[0] || '-';
-
-        return `
-        <div class="combo-card">
-            <div class="combo-card-content">
-                <div style="display: flex; align-items: center; gap: 4px;">
-                    <div class="tooltip-box" id="serieBadgeContainer-${index}" title="Modelo: ${modeloAtual}">
-                        <span class="serial-badge-prominent">
-                            <i class="fa-solid fa-barcode"></i> <span id="serieTxt-${index}">${serieAtual}</span>
-                        </span>
-                        <span class="tooltip-text"><i class="fa-solid fa-print"></i> <strong>Modelo:</strong> ${modeloAtual}</span>
-                    </div>
-                    <button type="button" class="btn-copy" id="btnCopySerie-${index}" onclick="copiarTexto(event, '${serieAtual}', 'Número de série')" title="Copiar Série"><i class="fa-regular fa-copy"></i></button>
-                </div>
-                <div class="combo-card-title">
-                    <span class="combo-card-title-text" id="modeloTxt-${index}">${modeloAtual}</span>
-                    <button type="button" class="btn-copy" id="btnCopyModelo-${index}" onclick="copiarTexto(event, '${modeloAtual}', 'Modelo')" title="Copiar Modelo"><i class="fa-regular fa-copy"></i></button>
-                </div>
-            </div>
-            ${arrowHtml}
-            ${hasMultiple ? `<select id="equipamentoSelect-${index}" onchange="sincronizarTodos(${index}, this.value)">${options}</select>` : ''}
-        </div>`;
-    }
-
-    function renderCardResponsavel(arrResponsaveis, arrContatos, index) {
-        const hasMultiple = arrResponsaveis.length > 1;
-        const arrowHtml = hasMultiple ? '<i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted); flex-shrink: 0;"></i>' : '';
-        const options = arrResponsaveis.map((item, i) => `<option value="${i}">${item} - ${arrContatos[i] || '-'}</option>`).join('');
-
-        return `
-        <div class="combo-card">
-            <div class="combo-card-content">
-                <div class="combo-card-title">
-                    <i class="fa-regular fa-user" style="color: var(--text-muted); flex-shrink: 0;"></i>
-                    <span class="combo-card-title-text" id="respTxt-${index}">${arrResponsaveis[0] || '-'}</span>
-                </div>
-                <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;" id="contatoTxt-${index}">
-                    <i class="fa-brands fa-whatsapp" style="color: #25D366; flex-shrink: 0;"></i> ${arrContatos[0] || '-'}
-                </div>
-            </div>
-            ${arrowHtml}
-            ${hasMultiple ? `<select id="responsavelSelect-${index}" onchange="sincronizarTodos(${index}, this.value)">${options}</select>` : ''}
-        </div>`;
-    }
-
-    function renderCardLocal(arrLocais, index) {
-        if (!arrLocais || arrLocais.length === 0 || (arrLocais.length === 1 && !arrLocais[0])) {
-            return '<span style="color: var(--text-muted);">-</span>';
+        if (arr.length <= 1) {
+            let val = arr[0] || '';
+            if (isSerie) return `<div style="font-weight:400; color:var(--text-muted); margin-bottom:4px;">${prefixHtml}${val}</div>`;
+            if (isContato) return `<div style="font-weight:400; color:var(--text-muted); margin-top:4px; display:flex; align-items:center; gap:6px;">${iconHtml}${val}</div>`;
+            return `<div style="font-weight:600; color:var(--primary);">${val}</div>`;
         }
-
-        const hasMultiple = arrLocais.length > 1;
-        const arrowHtml = hasMultiple ? '<i class="fa-solid fa-chevron-down" style="font-size: 11px; color: var(--text-muted); flex-shrink: 0;"></i>' : '';
-        const options = arrLocais.map((item, i) => `<option value="${i}">${item}</option>`).join('');
-
-        return `
-        <div class="combo-card">
-            <div class="location-chip" id="localTxt-${index}">
-                <i class="fa-solid fa-location-dot" style="color: var(--accent); flex-shrink: 0;"></i> ${arrLocais[0]}
+        
+        let options = arr.map((item, i) => `<option value="${i}">${item}</option>`).join('');
+        let displayVal = `${iconHtml}${prefixHtml}${arr[0]}`;
+        let extraStyle = (isSerie || isContato) ? 'font-weight:400; color:var(--text-muted);' : 'font-weight:600; color:var(--primary);';
+        
+        return `<div class="combo-box">
+            <div id="${idPrefix}Input-${index}" class="combo-input" style="${extraStyle}">${displayVal}</div>
+            <div class="combo-select-wrapper">
+                <i class="fa-solid fa-chevron-down combo-arrow"></i>
             </div>
-            ${arrowHtml}
-            ${hasMultiple ? `<select id="localSelect-${index}" onchange="sincronizarTodos(${index}, this.value)">${options}</select>` : ''}
+            <select id="${idPrefix}Select-${index}" class="combo-select" onchange="sincronizarTodos(${index}, this.value)">
+                ${options}
+            </select>
         </div>`;
     }
 
@@ -815,7 +727,6 @@
             return;
         }
 
-        // Checa se o usuário atual é o Administrador
         const { data: { session } } = await _supabase.auth.getSession();
         const usuarioAtual = session?.user?.email || '';
         const isAdm = (usuarioAtual.toLowerCase() === EMAIL_ADM.toLowerCase());
@@ -844,36 +755,33 @@
             const linkWhatsapp = gerarLinkWhatsapp(item, 0);
             const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : '-';
             
-            // Exibe o autor apenas se for o ADM logado
             let autorInfo = '';
             if (isAdm && item.modificado_por) {
                 autorInfo = ` por ${item.modificado_por.split('@')[0]}`;
             }
 
-            const infoAtualizacao = `Atualizado em: ${dataFormatada}${autorInfo}`;
-
             tabelaCorpo.innerHTML += `
                 <tr>
                     <td>
-                        <div class="tooltip-box" title="${infoAtualizacao}">
-                            <span class="client-name">${item.cliente}</span>
-                            <span class="tooltip-text"><i class="fa-regular fa-clock"></i> ${infoAtualizacao}</span>
-                        </div>
+                        <span class="client-name">${item.cliente}</span>
+                        <div class="client-date">Atualizado: ${dataFormatada}${autorInfo}</div>
                     </td>
                     <td>
-                        ${renderCardEquipamento(arrModelos, arrSeries, index)}
+                        ${createComboOrText(arrSeries, 'serie', index, true, false)}
+                        ${createComboOrText(arrModelos, 'modelo', index, false, false)}
                     </td>
                     <td>
-                        ${renderCardResponsavel(arrResponsaveis, arrContatos, index)}
+                        ${createComboOrText(arrResponsaveis, 'responsavel', index, false, false)}
+                        ${createComboOrText(arrContatos, 'contato', index, false, true)}
                     </td>
                     <td>
-                        ${renderCardLocal(arrLocais, index)}
+                        ${createComboOrText(arrLocais, 'local', index, false, false)}
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="${linkWhatsapp}" id="btnWpp-${index}" target="_blank" class="btn-whatsapp" title="Abrir no WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                            <button class="btn-editar" onclick="editarCadastro('${item.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-excluir" onclick="excluirCadastro('${item.id}')" title="Excluir"><i class="fa-solid fa-xmark"></i></button>
+                            <a href="${linkWhatsapp}" id="btnWpp-${index}" target="_blank" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                            <button class="btn-editar" onclick="editarCadastro('${item.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-excluir" onclick="excluirCadastro('${item.id}')"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                     </td>
                 </tr>`;
@@ -922,7 +830,6 @@
         };
 
         if (editandoId) { 
-            // Atualiza também o created_at para refletir a nova data/hora de edição
             dados.created_at = new Date().toISOString();
 
             const { error } = await _supabase.from('clientes').update(dados).eq('id', editandoId);
@@ -960,15 +867,21 @@
         }
     }
 
-    // Inicialização do E-mail salvo e checagem de sessão
+    // --- INICIALIZAÇÃO DE SESSÃO E VERIFICAÇÃO DE HASH ---
     const emailSalvo = localStorage.getItem('lembrar_email');
     if (emailSalvo) {
         document.getElementById('emailLogin').value = emailSalvo;
         document.getElementById('lembrarEmail').checked = true;
     }
 
-    _supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
+    // Monitora alterações no estado da sessão (ex: quando o usuário clica no link do e-mail de recuperação)
+    _supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+            // Se o usuário acessou o site através de um link de recuperação de senha
+            telaApp.classList.add('hidden');
+            telaAuth.classList.remove('hidden');
+            alternarFormularios('redefinir');
+        } else if (session) {
             mostrarApp();
         }
     });
