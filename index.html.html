@@ -84,7 +84,7 @@
         .link-acao { display: inline-block; margin-top: 15px; color: var(--text-muted); text-decoration: none; font-size: 13px; cursor: pointer; }
         .link-acao:hover { color: var(--accent); text-decoration: underline; }
 
-        .btn-login { width: 100%; padding: 14px; background-color: var(--accent); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; transition: background-color 0.2s; margin-top: 10px; }
+        .btn-login { width: 100%; padding: 14px; background-color: var(--accent); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; transition: background-color 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-login:hover { background-color: var(--accent-hover); }
 
         #telaApp {
@@ -130,11 +130,20 @@
         input::placeholder, textarea::placeholder { color: var(--text-muted); }
 
         .form-actions { grid-column: span 2; display: flex; gap: 15px; margin-top: 10px; }
-        .form-actions button { flex: 1; padding: 14px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: 600; color: white;}
+        .form-actions button { flex: 1; padding: 14px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: 600; color: white; display: flex; align-items: center; justify-content: center; gap: 8px;}
         #btnSalvar { background-color: var(--accent); }
         #btnSalvar:hover { background-color: var(--accent-hover); }
         #btnCancelar { background-color: #94a3b8; display: none; }
         #btnCancelar:hover { background-color: #64748b; }
+
+        /* BUSCA E TOOLBAR */
+        .table-toolbar {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 15px; margin-bottom: 15px; flex-wrap: wrap;
+        }
+        .search-container { position: relative; flex: 1; min-width: 260px; }
+        .search-container input { padding-left: 38px; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
 
         .table-container { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
@@ -144,103 +153,53 @@
         td:last-child { border-right: 1px solid var(--border); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
 
         .client-name { 
-            font-weight: 700; 
-            color: var(--primary); 
-            font-size: 14px; 
-            display: inline-block; 
-            line-height: 1.3; 
-            cursor: pointer;
-            transition: color 0.2s;
+            font-weight: 700; color: var(--primary); font-size: 14px; 
+            display: inline-block; line-height: 1.3; cursor: pointer; transition: color 0.2s;
         }
         .client-name:hover { color: var(--accent); }
 
         .card-box-container {
-            background: var(--card-box-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 10px;
-            position: relative;
-            min-width: 200px;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            background: var(--card-box-bg); border: 1px solid var(--border);
+            border-radius: 8px; padding: 8px 10px; position: relative;
+            min-width: 200px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .card-box-container:hover {
-            border-color: rgba(37, 99, 235, 0.3);
-        }
+        .card-box-container:hover { border-color: rgba(37, 99, 235, 0.3); }
 
-        .card-row {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 6px;
-        }
-
-        .card-row + .card-row {
-            margin-top: 6px;
-        }
+        .card-row { display: flex; align-items: center; justify-content: flex-start; gap: 6px; }
+        .card-row + .card-row { margin-top: 6px; }
 
         .badge-serie {
-            background: var(--badge-bg);
-            color: var(--badge-color);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            letter-spacing: 0.3px;
+            background: var(--badge-bg); color: var(--badge-color);
+            padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 5px; letter-spacing: 0.3px;
         }
 
         .btn-copy-inline {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 12px;
-            padding: 0 2px;
-            display: inline-flex;
-            align-items: center;
-            transition: color 0.2s;
+            background: transparent; border: none; color: var(--text-muted);
+            cursor: pointer; font-size: 12px; padding: 0 2px; display: inline-flex;
+            align-items: center; transition: color 0.2s;
         }
         .btn-copy-inline:hover { color: var(--accent); }
 
         .machine-title, .person-name {
-            font-weight: 700;
-            font-size: 12px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-weight: 700; font-size: 12px; color: var(--primary);
+            display: flex; align-items: center; gap: 5px;
         }
 
         .phone-link {
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: color 0.2s;
+            color: var(--text-main); text-decoration: none; font-size: 12px;
+            font-weight: 500; display: inline-flex; align-items: center; gap: 5px; transition: color 0.2s;
         }
         .phone-link:hover { color: #25D366; }
 
         .select-card-trigger {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 11px;
-            pointer-events: none;
+            position: absolute; top: 8px; right: 8px; background: transparent;
+            border: none; color: var(--text-muted); cursor: pointer; font-size: 11px; pointer-events: none;
         }
 
         .combo-select-card {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             opacity: 0; cursor: pointer; z-index: 10;
         }
 
@@ -251,7 +210,52 @@
         .btn-excluir { background-color: var(--danger); }
         .btn-whatsapp:hover, .btn-editar:hover, .btn-excluir:hover { opacity: 0.85; }
 
-        #toast { visibility: hidden; min-width: 250px; background-color: var(--success); color: #fff; text-align: center; border-radius: 8px; padding: 14px 20px; position: fixed; z-index: 1000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 14px; font-weight: 600; opacity: 0; transition: opacity 0.3s, top 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        /* PAGINAÇÃO COM SELETOR DE QUANTIDADE */
+        .pagination-container {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border);
+            font-size: 13px; color: var(--text-muted); flex-wrap: wrap; gap: 10px;
+        }
+        .pagination-controls { display: flex; gap: 12px; align-items: center; }
+        .btn-page {
+            background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main);
+            padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-page:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-page:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
+        
+        .items-per-page-container {
+            display: flex; align-items: center; gap: 6px; font-weight: 500;
+        }
+        .select-items-page {
+            width: auto; padding: 4px 8px; font-size: 13px; font-weight: 600;
+            border-radius: 6px; border: 1px solid var(--border); cursor: pointer;
+        }
+
+        /* MODAL CUSTOMIZADO */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+            z-index: 2000; backdrop-filter: blur(2px);
+        }
+        .modal-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 24px; max-width: 400px; width: 90%; text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .modal-card h3 { margin-top: 0; color: var(--primary); font-size: 18px; }
+        .modal-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .modal-btn {
+            padding: 10px 18px; border-radius: 6px; border: none; font-weight: 600;
+            font-size: 14px; cursor: pointer; transition: opacity 0.2s;
+        }
+        .modal-btn-confirm { background: var(--danger); color: white; }
+        .modal-btn-cancel { background: var(--border); color: var(--text-main); }
+        .modal-btn:hover { opacity: 0.9; }
+
+        #toast { visibility: hidden; min-width: 250px; background-color: var(--success); color: #fff; text-align: center; border-radius: 8px; padding: 14px 20px; position: fixed; z-index: 3000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 14px; font-weight: 600; opacity: 0; transition: opacity 0.3s, top 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         #toast.show { visibility: visible; opacity: 1; top: 50px; }
 
         @media (max-width: 768px) {
@@ -263,6 +267,8 @@
             body { padding-top: 10px; }
             #telaApp { margin-top: 10px; }
             .app-content { padding: 15px; }
+            .table-toolbar { flex-direction: column; align-items: stretch; }
+            .pagination-container { flex-direction: column; align-items: center; text-align: center; }
         }
     </style>
 </head>
@@ -270,6 +276,18 @@
 
 <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Modo Escuro</button>
 <div id="toast">Operação realizada com sucesso!</div>
+
+<!-- MODAL DE CONFIRMAÇÃO PERSONALIZADO -->
+<div id="modalConfirm" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 id="modalConfirmTitle">Confirmar Ação</h3>
+        <p id="modalConfirmMessage">Tem certeza de que deseja realizar esta operação?</p>
+        <div class="modal-actions">
+            <button class="modal-btn modal-btn-cancel" onclick="fecharModalConfirm(false)">Cancelar</button>
+            <button class="modal-btn modal-btn-confirm" id="btnModalConfirmAction">Confirmar</button>
+        </div>
+    </div>
+</div>
 
 <!-- TELA DE AUTENTICAÇÃO -->
 <div id="telaAuth">
@@ -416,9 +434,17 @@
             </form>
         </div>
 
-        <!-- ABA 2: LISTAGEM COM CARDS E SELECTS -->
+        <!-- ABA 2: LISTAGEM COM BUSCA E PAGINAÇÃO -->
         <div id="abaContatos" class="hidden">
             <h2>Contatos Salvos</h2>
+            
+            <div class="table-toolbar">
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="inputBusca" placeholder="Pesquisar por cliente, série, modelo, responsável..." oninput="filtrarContatos()">
+                </div>
+            </div>
+
             <div class="table-container">
                 <table>
                     <thead>
@@ -432,6 +458,27 @@
                     </thead>
                     <tbody id="tabelaCorpo"></tbody>
                 </table>
+            </div>
+
+            <!-- CONTROLES DE PAGINAÇÃO -->
+            <div class="pagination-container">
+                <span id="paginationInfo">Mostrando 0 registros</span>
+                
+                <div class="pagination-controls">
+                    <div class="items-per-page-container">
+                        <span>Exibir:</span>
+                        <select id="selectItensPagina" class="select-items-page" onchange="alterarItensPorPagina(this.value)">
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-page" id="btnPagePrev" onclick="mudarPagina(-1)"><i class="fa-solid fa-chevron-left"></i> Anterior</button>
+                    <span id="pageIndicator" style="font-weight: 600;">1 / 1</span>
+                    <button class="btn-page" id="btnPageNext" onclick="mudarPagina(1)">Próximo <i class="fa-solid fa-chevron-right"></i></button>
+                </div>
             </div>
         </div>
     </div>
@@ -447,6 +494,7 @@
 
     const EMAIL_ADM = 'marrison.carlos@meyerr.com.br';
 
+    // GERENCIADOR DE TEMA
     const themeToggleBtn = document.getElementById('themeToggle');
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-mode');
@@ -491,6 +539,9 @@
 
     async function fazerLogout() {
         await _supabase.auth.signOut();
+        cadastros = [];
+        cadastrosFiltrados = [];
+        document.getElementById('tabelaCorpo').innerHTML = '';
         telaApp.classList.add('hidden');
         telaAuth.classList.remove('hidden');
         alternarFormularios('login');
@@ -522,6 +573,20 @@
         setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
     }
 
+    // MODAL DE CONFIRMAÇÃO PROMISE
+    let modalResolver = null;
+    function abrirModalConfirm(titulo, mensagem) {
+        document.getElementById('modalConfirmTitle').textContent = titulo;
+        document.getElementById('modalConfirmMessage').textContent = mensagem;
+        document.getElementById('modalConfirm').classList.remove('hidden');
+        return new Promise((resolve) => { modalResolver = resolve; });
+    }
+    function fecharModalConfirm(confirmado) {
+        document.getElementById('modalConfirm').classList.add('hidden');
+        if (modalResolver) modalResolver(confirmado);
+    }
+    document.getElementById('btnModalConfirmAction').onclick = () => fecharModalConfirm(true);
+
     window.copiarTexto = function(texto) {
         if (!texto) return;
         navigator.clipboard.writeText(texto).then(() => {
@@ -531,8 +596,7 @@
         });
     }
 
-    // --- AUTENTICAÇÃO E RECUPERAÇÃO DE SENHA ---
-
+    // --- AUTENTICAÇÃO E RECUPERAÇÃO ---
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault(); 
         const email = document.getElementById('emailLogin').value;
@@ -542,16 +606,12 @@
         const errorMsg = document.getElementById('errorMsgLogin');
 
         try {
-            btnLogin.textContent = "Validando..."; btnLogin.disabled = true;
+            btnLogin.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Validando...'; btnLogin.disabled = true;
             const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-            
             if (error) throw error;
 
-            if (lembrar) {
-                localStorage.setItem('lembrar_email', email);
-            } else {
-                localStorage.removeItem('lembrar_email');
-            }
+            if (lembrar) localStorage.setItem('lembrar_email', email);
+            else localStorage.removeItem('lembrar_email');
 
             btnLogin.textContent = "Entrar"; btnLogin.disabled = false;
             mostrarApp();
@@ -576,7 +636,7 @@
         if (password !== senhaConfirm) return showMsg("As senhas não coincidem.", "error");
 
         try {
-            btnCadastro.textContent = "Cadastrando..."; btnCadastro.disabled = true;
+            btnCadastro.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Cadastrando...'; btnCadastro.disabled = true;
             const { data, error } = await _supabase.auth.signUp({ email, password });
             if (error) throw error;
 
@@ -604,11 +664,10 @@
         const showMsg = (texto, tipo) => { statusMsg.textContent = texto; statusMsg.className = `status-msg ${tipo}`; statusMsg.style.display = 'block'; };
 
         try {
-            btnRecuperar.textContent = "Enviando..."; btnRecuperar.disabled = true;
+            btnRecuperar.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Enviando...'; btnRecuperar.disabled = true;
             const { error } = await _supabase.auth.resetPasswordForEmail(email, {
                 redirectTo: window.location.href.split('#')[0]
             });
-
             if (error) throw error;
 
             showMsg("E-mail enviado! Verifique sua caixa de entrada.", "success");
@@ -635,9 +694,8 @@
         const showMsg = (texto, tipo) => { statusMsg.textContent = texto; statusMsg.className = `status-msg ${tipo}`; statusMsg.style.display = 'block'; };
 
         try {
-            btnRedefinir.textContent = "Salvando..."; btnRedefinir.disabled = true;
+            btnRedefinir.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Salvando...'; btnRedefinir.disabled = true;
             const { error } = await _supabase.auth.updateUser({ password: novaSenha });
-
             if (error) throw error;
 
             showMsg("Senha atualizada com sucesso!", "success");
@@ -655,7 +713,7 @@
         }
     });
 
-    // --- LÓGICA DO CRUD E RENDERIZAÇÃO DA TABELA ---
+    // --- CRUD, FILTRAGEM E PAGINAÇÃO ---
     document.getElementById('contato').addEventListener('input', function(e) {
         let lines = e.target.value.split('\n');
         let maskedLines = lines.map(line => {
@@ -667,12 +725,24 @@
     });
 
     let cadastros = [];
+    let cadastrosFiltrados = [];
+    let paginaAtual = 1;
+    let itensPorPagina = 10;
     let editandoId = null; 
+
     const formCrud = document.getElementById('cadastroForm');
     const btnSalvar = document.getElementById('btnSalvar');
     const btnCancelar = document.getElementById('btnCancelar');
 
+    function sanitizarLinhas(texto) {
+        if (!texto) return '';
+        return texto.split('\n').map(l => l.trim()).filter(l => l !== '').join('\n');
+    }
+
     async function carregarERenderizar() {
+        const tabelaCorpo = document.getElementById('tabelaCorpo');
+        tabelaCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando contatos...</td></tr>';
+
         const { data, error } = await _supabase.from('clientes').select('*');
         if (error) {
             mostrarToast("Erro ao carregar os dados.", "error");
@@ -685,7 +755,26 @@
             return clienteA.localeCompare(clienteB, undefined, { numeric: true, sensitivity: 'base' });
         });
 
-        await renderizarTabela();
+        filtrarContatos();
+    }
+
+    window.filtrarContatos = function() {
+        const termo = document.getElementById('inputBusca').value.toLowerCase().trim();
+        paginaAtual = 1;
+
+        if (!termo) {
+            cadastrosFiltrados = [...cadastros];
+        } else {
+            cadastrosFiltrados = cadastros.filter(c => {
+                return (c.cliente || '').toLowerCase().includes(termo) ||
+                       (c.serie || '').toLowerCase().includes(termo) ||
+                       (c.modelo || '').toLowerCase().includes(termo) ||
+                       (c.responsavel || '').toLowerCase().includes(termo) ||
+                       (c.local || '').toLowerCase().includes(termo);
+            });
+        }
+
+        renderizarTabela();
     }
 
     function gerarLinkWhatsapp(cadastro, selectedIndex = 0) {
@@ -716,7 +805,7 @@
     }
 
     window.sincronizarTodos = function(rowIndex, selectedIndex) {
-        const item = cadastros[rowIndex];
+        const item = cadastrosFiltrados[rowIndex];
         if (!item) return;
 
         let arrSeries = (item.serie || '').split('\n').filter(s => s.trim() !== '');
@@ -763,16 +852,26 @@
         const tabelaCorpo = document.getElementById('tabelaCorpo');
         tabelaCorpo.innerHTML = ''; 
 
-        if (cadastros.length === 0) {
+        if (cadastrosFiltrados.length === 0) {
             tabelaCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum registro encontrado.</td></tr>';
+            atualizarPaginacao(0);
             return;
         }
+
+        const totalItens = cadastrosFiltrados.length;
+        const totalPaginas = Math.ceil(totalItens / itensPorPagina) || 1;
+        if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+
+        const inicio = (paginaAtual - 1) * itensPorPagina;
+        const fim = Math.min(inicio + itensPorPagina, totalItens);
+        const itensPagina = cadastrosFiltrados.slice(inicio, fim);
 
         const { data: { session } } = await _supabase.auth.getSession();
         const usuarioAtual = session?.user?.email || '';
         const isAdm = (usuarioAtual.toLowerCase() === EMAIL_ADM.toLowerCase());
 
-        cadastros.forEach((item, index) => {
+        itensPagina.forEach((item, relativeIndex) => {
+            const globalIndex = inicio + relativeIndex;
             let arrSeries = (item.serie || '').split('\n').filter(s => s.trim() !== '');
             let arrModelos = (item.modelo || '').split('\n').filter(m => m.trim() !== '');
             let arrResponsaveis = (item.responsavel || '').split('\n').filter(r => r.trim() !== '');
@@ -819,17 +918,17 @@
 
             const selectMaqHtml = maxLines > 1 ? `
                 <i class="fa-solid fa-chevron-down select-card-trigger"></i>
-                <select class="combo-select-card" onchange="sincronizarTodos(${index}, this.value)">${gerarOptionsMaquinas()}</select>
+                <select class="combo-select-card" onchange="sincronizarTodos(${globalIndex}, this.value)">${gerarOptionsMaquinas()}</select>
             ` : '';
 
             const selectRespHtml = maxLines > 1 ? `
                 <i class="fa-solid fa-chevron-down select-card-trigger"></i>
-                <select class="combo-select-card" onchange="sincronizarTodos(${index}, this.value)">${gerarOptionsGenerico(arrResponsaveis)}</select>
+                <select class="combo-select-card" onchange="sincronizarTodos(${globalIndex}, this.value)">${gerarOptionsGenerico(arrResponsaveis)}</select>
             ` : '';
 
             const selectLocalHtml = maxLines > 1 ? `
                 <i class="fa-solid fa-chevron-down select-card-trigger"></i>
-                <select class="combo-select-card" onchange="sincronizarTodos(${index}, this.value)">${gerarOptionsGenerico(arrLocais)}</select>
+                <select class="combo-select-card" onchange="sincronizarTodos(${globalIndex}, this.value)">${gerarOptionsGenerico(arrLocais)}</select>
             ` : '';
 
             tabelaCorpo.innerHTML += `
@@ -838,7 +937,7 @@
                         <span class="client-name" title="${tooltipText}">${item.cliente}</span>
                     </td>
                     <td>
-                        <div class="card-box-container" id="cardMaq-${index}">
+                        <div class="card-box-container" id="cardMaq-${globalIndex}">
                             ${selectMaqHtml}
                             <div class="card-row">
                                 <span class="badge-serie">
@@ -857,7 +956,7 @@
                         </div>
                     </td>
                     <td>
-                        <div class="card-box-container" id="cardResp-${index}">
+                        <div class="card-box-container" id="cardResp-${globalIndex}">
                             ${selectRespHtml}
                             <div class="card-row">
                                 <div class="person-name">
@@ -874,7 +973,7 @@
                         </div>
                     </td>
                     <td>
-                        <div class="card-box-container" id="cardLocal-${index}" style="min-width: 130px;">
+                        <div class="card-box-container" id="cardLocal-${globalIndex}" style="min-width: 130px;">
                             ${selectLocalHtml}
                             <div class="card-row">
                                 <i class="fa-solid fa-location-dot" style="color: #38bdf8; font-size: 12px;"></i>
@@ -884,13 +983,35 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="${linkWhatsapp}" id="btnWpp-${index}" target="_blank" class="btn-whatsapp" title="Abrir no WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                            <a href="${linkWhatsapp}" id="btnWpp-${globalIndex}" target="_blank" class="btn-whatsapp" title="Abrir no WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
                             <button class="btn-editar" onclick="editarCadastro('${item.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
                             <button class="btn-excluir" onclick="excluirCadastro('${item.id}')" title="Excluir"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                     </td>
                 </tr>`;
         });
+
+        atualizarPaginacao(totalItens);
+    }
+
+    function atualizarPaginacao(total) {
+        const totalPaginas = Math.ceil(total / itensPorPagina) || 1;
+        document.getElementById('paginationInfo').textContent = `Mostrando ${total === 0 ? 0 : (paginaAtual - 1) * itensPorPagina + 1} a ${Math.min(paginaAtual * itensPorPagina, total)} de ${total} registros`;
+        document.getElementById('pageIndicator').textContent = `${paginaAtual} / ${totalPaginas}`;
+        
+        document.getElementById('btnPagePrev').disabled = paginaAtual <= 1;
+        document.getElementById('btnPageNext').disabled = paginaAtual >= totalPaginas;
+    }
+
+    window.mudarPagina = function(delta) {
+        paginaAtual += delta;
+        renderizarTabela();
+    }
+
+    window.alterarItensPorPagina = function(valor) {
+        itensPorPagina = parseInt(valor, 10);
+        paginaAtual = 1;
+        renderizarTabela();
     }
 
     window.editarCadastro = function(id) {
@@ -904,7 +1025,7 @@
         editandoId = id;
         btnSalvar.innerHTML = '<i class="fa-solid fa-check"></i> Atualizar'; 
         btnSalvar.style.backgroundColor = 'var(--warning)';
-        btnCancelar.style.display = 'block';
+        btnCancelar.style.display = 'inline-flex';
         
         mudarAba('inicio'); 
     }
@@ -925,20 +1046,26 @@
         const userEmail = session?.user?.email || 'Desconhecido';
 
         const dados = {
-            cliente: document.getElementById('cliente').value,
-            responsavel: document.getElementById('responsavel').value,
-            modelo: document.getElementById('modelo').value,
-            serie: document.getElementById('serie').value,
-            contato: document.getElementById('contato').value,
-            local: document.getElementById('local').value,
+            cliente: document.getElementById('cliente').value.trim(),
+            responsavel: sanitizarLinhas(document.getElementById('responsavel').value),
+            modelo: sanitizarLinhas(document.getElementById('modelo').value),
+            serie: sanitizarLinhas(document.getElementById('serie').value),
+            contato: sanitizarLinhas(document.getElementById('contato').value),
+            local: sanitizarLinhas(document.getElementById('local').value),
             modificado_por: userEmail
         };
+
+        btnSalvar.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Salvando...';
+        btnSalvar.disabled = true;
 
         if (editandoId) { 
             dados.created_at = new Date().toISOString();
 
             const { error } = await _supabase.from('clientes').update(dados).eq('id', editandoId);
+            btnSalvar.disabled = false;
+            
             if (error) {
+                btnSalvar.innerHTML = '<i class="fa-solid fa-check"></i> Atualizar';
                 mostrarToast("Erro ao atualizar registro.", "error");
             } else {
                 cancelarEdicao(); 
@@ -948,9 +1075,13 @@
         } 
         else { 
             const { error } = await _supabase.from('clientes').insert([dados]);
+            btnSalvar.disabled = false;
+
             if (error) {
+                btnSalvar.textContent = 'Salvar Cadastro';
                 mostrarToast("Erro ao criar registro.", "error");
             } else {
+                btnSalvar.textContent = 'Salvar Cadastro';
                 formCrud.reset(); 
                 document.getElementById('cliente').focus(); 
                 mostrarToast("Salvo com sucesso!"); 
@@ -960,7 +1091,8 @@
     });
 
     window.excluirCadastro = async function(id) {
-        if(confirm("Deseja excluir este registro?")) {
+        const confirmado = await abrirModalConfirm("Excluir Cadastro", "Deseja realmente remover este registro? Esta ação não pode ser desfeita.");
+        if (confirmado) {
             const { error } = await _supabase.from('clientes').delete().eq('id', id);
             if (error) {
                 mostrarToast("Erro ao excluir registro.", "error");
@@ -972,7 +1104,7 @@
         }
     }
 
-    // --- INICIALIZAÇÃO DE SESSÃO E ESCUTA DE EVENTOS ---
+    // INICIALIZAÇÃO DE SESSÃO
     const emailSalvo = localStorage.getItem('lembrar_email');
     if (emailSalvo) {
         document.getElementById('emailLogin').value = emailSalvo;
