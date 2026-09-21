@@ -137,12 +137,25 @@
         #btnCancelar:hover { background-color: #64748b; }
 
         .table-toolbar {
-            display: flex; justify-content: space-between; align-items: center;
-            gap: 15px; margin-bottom: 15px; flex-wrap: wrap;
+            display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;
         }
+        
+        .toolbar-top-row {
+            display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+        }
+
         .search-container { position: relative; flex: 1; min-width: 260px; }
-        .search-container input { padding-left: 38px; }
+        .search-container input { padding-left: 38px; padding-right: 35px; }
         .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+        .clear-search-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; display: none; }
+        .clear-search-btn:hover { color: var(--danger); }
+
+        .btn-view-toggle {
+            background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main);
+            padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;
+            display: flex; align-items: center; gap: 8px; transition: all 0.2s;
+        }
+        .btn-view-toggle:hover { border-color: var(--accent); color: var(--accent); }
 
         .table-container { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
@@ -161,11 +174,17 @@
         td:first-child { border-left: 1px solid var(--border); border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
         td:last-child { border-right: 1px solid var(--border); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
 
+        .client-name-container { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .client-name { 
             font-weight: 700; color: var(--primary); font-size: 14px; 
             display: inline-block; line-height: 1.3; cursor: pointer; transition: color 0.2s;
         }
         .client-name:hover { color: var(--accent); }
+
+        .equip-count-badge {
+            background: var(--badge-bg); color: var(--badge-color); font-size: 10px;
+            font-weight: 700; padding: 2px 6px; border-radius: 10px; border: 1px solid var(--border);
+        }
 
         .card-box-container {
             background: var(--card-box-bg); border: 1px solid var(--border);
@@ -180,14 +199,14 @@
 
         .badge-serie {
             background: var(--badge-bg); color: var(--badge-color);
-            padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;
+            padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;
             display: inline-flex; align-items: center; gap: 5px; letter-spacing: 0.3px;
         }
 
         .btn-copy-inline {
             background: transparent; border: none; color: var(--text-muted);
-            cursor: pointer; font-size: 12px; padding: 0 2px; display: inline-flex;
-            align-items: center; transition: color 0.2s;
+            cursor: pointer; font-size: 12px; padding: 0 4px; display: inline-flex;
+            align-items: center; justify-content: center; transition: color 0.2s;
         }
         .btn-copy-inline:hover { color: var(--accent); }
 
@@ -222,6 +241,19 @@
         .btn-editar { background-color: var(--warning); }
         .btn-excluir { background-color: var(--danger); }
         .btn-whatsapp:hover, .btn-editar:hover, .btn-excluir:hover { opacity: 0.85; }
+
+        .grid-view-container {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-top: 10px;
+        }
+        .grid-card-item {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px; display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .grid-card-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            border-bottom: 1px solid var(--border); padding-bottom: 10px;
+        }
 
         .pagination-container {
             display: flex; justify-content: space-between; align-items: center;
@@ -279,7 +311,7 @@
             body { padding-top: 10px; }
             #telaApp { margin-top: 10px; }
             .app-content { padding: 15px; }
-            .table-toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar-top-row { flex-direction: column; align-items: stretch; }
             .pagination-container { flex-direction: column; align-items: center; text-align: center; }
         }
     </style>
@@ -419,7 +451,7 @@
     </div>
 
     <div class="app-content">
-        <!-- ABA 1: FORMULÁRIO -->
+        <!-- ABA 1: FORMULÁRIO DE CADASTRO -->
         <div id="abaInicio">
             <h2>Cadastro de Cliente</h2>
             <form id="cadastroForm">
@@ -457,18 +489,28 @@
             </form>
         </div>
 
-        <!-- ABA 2: LISTAGEM COM BUSCA, ORDENAÇÃO E PAGINAÇÃO -->
+        <!-- ABA 2: LISTAGEM COM RECURSOS -->
         <div id="abaContatos" class="hidden">
             <h2>Contatos Salvos</h2>
             
             <div class="table-toolbar">
-                <div class="search-container">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" id="inputBusca" placeholder="Pesquisar por cliente, série, modelo, responsável..." oninput="filtrarContatos()">
+                <div class="toolbar-top-row">
+                    <!-- BUSCA INTELIGENTE -->
+                    <div class="search-container">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="inputBusca" placeholder="Pesquisar cliente, série, modelo, telefone..." oninput="filtrarContatos()">
+                        <button class="clear-search-btn" id="btnClearSearch" onclick="limparBusca()" title="Limpar busca"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <!-- ALTERNAR MODO DE VISUALIZAÇÃO (CARDS / TABELA) -->
+                    <button class="btn-view-toggle" id="btnToggleView" onclick="alternarModoVisualizacao()">
+                        <i class="fa-solid fa-border-all"></i> Modo Cards
+                    </button>
                 </div>
             </div>
 
-            <div class="table-container">
+            <!-- TABELA TRADICIONAL -->
+            <div class="table-container" id="containerTabela">
                 <table>
                     <thead>
                         <tr>
@@ -483,7 +525,10 @@
                 </table>
             </div>
 
-            <!-- CONTROLES DE PAGINAÇÃO -->
+            <!-- CONTAINER DO MODO GRELHA / CARDS -->
+            <div id="containerGrid" class="grid-view-container hidden"></div>
+
+            <!-- PAGINAÇÃO -->
             <div class="pagination-container">
                 <span id="paginationInfo">Mostrando 0 registros</span>
                 
@@ -553,13 +598,11 @@
         document.getElementById('sectionRedefinir').classList.toggle('hidden', alvo !== 'redefinir');
     }
 
-    // Variável global para rastrear a aba ativa atual
     let abaAtivaAtual = 'inicio';
 
     function mostrarApp() {
         telaAuth.classList.add('hidden');
         telaApp.classList.remove('hidden');
-        // Preserva a aba atual em vez de forçar 'inicio'
         mudarAba(abaAtivaAtual); 
     }
 
@@ -576,7 +619,7 @@
     }
 
     window.mudarAba = function(aba) {
-        abaAtivaAtual = aba; // Armazena a aba selecionada pelo usuário
+        abaAtivaAtual = aba;
         document.getElementById('abaInicio').classList.add('hidden');
         document.getElementById('abaContatos').classList.add('hidden');
         
@@ -601,7 +644,6 @@
         setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
     }
 
-    // MODAL DE CONFIRMAÇÃO PROMISE
     let modalResolver = null;
     function abrirModalConfirm(titulo, mensagem) {
         document.getElementById('modalConfirmTitle').textContent = titulo;
@@ -624,7 +666,7 @@
         });
     }
 
-    // --- AUTENTICAÇÃO E RECUPERAÇÃO ---
+    // --- AUTENTICAÇÃO ---
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault(); 
         const email = document.getElementById('emailLogin').value;
@@ -741,7 +783,7 @@
         }
     });
 
-    // --- CRUD, FILTRAGEM, ORDENAÇÃO E PAGINAÇÃO ---
+    // --- CRUD, FILTRAGEM E MODO GRID ---
     document.getElementById('contato').addEventListener('input', function(e) {
         let lines = e.target.value.split('\n');
         let maskedLines = lines.map(line => {
@@ -760,6 +802,7 @@
 
     let colunaOrdenada = 'cliente';
     let ordemAsc = true;
+    let modoVisualizacao = 'tabela';
 
     const formCrud = document.getElementById('cadastroForm');
     const btnSalvar = document.getElementById('btnSalvar');
@@ -811,7 +854,7 @@
         });
 
         aplicarOrdenacao();
-        renderizarTabela();
+        renderizarExibicao();
     }
 
     function aplicarOrdenacao() {
@@ -823,23 +866,68 @@
         });
     }
 
+    // BUSCA INTELIGENTE POR TELEFONE E TEXTO
     window.filtrarContatos = function() {
-        const termo = document.getElementById('inputBusca').value.toLowerCase().trim();
+        const inputBusca = document.getElementById('inputBusca');
+        const termo = inputBusca.value.toLowerCase().trim();
+        const termoNumeroLimpo = termo.replace(/\D/g, '');
+        const btnClear = document.getElementById('btnClearSearch');
+
+        btnClear.style.display = termo ? 'block' : 'none';
         paginaAtual = 1;
 
-        if (!termo) {
-            cadastrosFiltrados = [...cadastros];
+        cadastrosFiltrados = cadastros.filter(c => {
+            if (!termo) return true;
+
+            const cliente = (c.cliente || '').toLowerCase();
+            const serie = (c.serie || '').toLowerCase();
+            const modelo = (c.modelo || '').toLowerCase();
+            const responsavel = (c.responsavel || '').toLowerCase();
+            const local = (c.local || '').toLowerCase();
+            const contatoLimpo = (c.contato || '').replace(/\D/g, '');
+
+            return cliente.includes(termo) ||
+                   serie.includes(termo) ||
+                   modelo.includes(termo) ||
+                   responsavel.includes(termo) ||
+                   local.includes(termo) ||
+                   (termoNumeroLimpo !== '' && contatoLimpo.includes(termoNumeroLimpo));
+        });
+
+        renderizarExibicao();
+    }
+
+    window.limparBusca = function() {
+        document.getElementById('inputBusca').value = '';
+        filtrarContatos();
+    }
+
+    // MODO DE EXIBIÇÃO CARDS X TABELA
+    window.alternarModoVisualizacao = function() {
+        modoVisualizacao = modoVisualizacao === 'tabela' ? 'grid' : 'tabela';
+        const btnToggle = document.getElementById('btnToggleView');
+        const containerTabela = document.getElementById('containerTabela');
+        const containerGrid = document.getElementById('containerGrid');
+
+        if (modoVisualizacao === 'grid') {
+            btnToggle.innerHTML = '<i class="fa-solid fa-table-list"></i> Modo Tabela';
+            containerTabela.classList.add('hidden');
+            containerGrid.classList.remove('hidden');
         } else {
-            cadastrosFiltrados = cadastros.filter(c => {
-                return (c.cliente || '').toLowerCase().includes(termo) ||
-                       (c.serie || '').toLowerCase().includes(termo) ||
-                       (c.modelo || '').toLowerCase().includes(termo) ||
-                       (c.responsavel || '').toLowerCase().includes(termo) ||
-                       (c.local || '').toLowerCase().includes(termo);
-            });
+            btnToggle.innerHTML = '<i class="fa-solid fa-border-all"></i> Modo Cards';
+            containerTabela.classList.remove('hidden');
+            containerGrid.classList.add('hidden');
         }
 
-        renderizarTabela();
+        renderizarExibicao();
+    }
+
+    function renderizarExibicao() {
+        if (modoVisualizacao === 'grid') {
+            renderizarGrid();
+        } else {
+            renderizarTabela();
+        }
     }
 
     function gerarLinkWhatsapp(cadastro, selectedIndex = 0) {
@@ -890,7 +978,6 @@
             <div class="history-item"><strong>ID do Sistema:</strong> <small>${item.id}</small></div>
             <div class="history-item"><strong>Última Atualização:</strong> ${dataCriacao}</div>
             <div class="history-item"><strong>Modificado por:</strong> ${modificadoPor}</div>
-            <div class="history-item"><strong>Status:</strong> Registro Ativo</div>
         `;
 
         document.getElementById('modalHistorico').classList.remove('hidden');
@@ -941,6 +1028,32 @@
         const btnWpp = document.getElementById(`btnWpp-${rowIndex}`);
         if (btnWpp) {
             btnWpp.href = gerarLinkWhatsapp(item, selectedIndex);
+        }
+
+        // Sincroniza também no modo Grid caso o elemento esteja presente
+        const gridMaq = document.getElementById(`gridMaq-${rowIndex}`);
+        if (gridMaq) {
+            gridMaq.querySelector('.badge-text').textContent = `Série: ${sVal}`;
+            gridMaq.querySelector('.badge-copy-btn').setAttribute('onclick', `copiarTexto('${sVal}')`);
+            gridMaq.querySelector('.machine-title-text').textContent = mVal;
+            gridMaq.querySelector('.machine-copy-btn').setAttribute('onclick', `copiarTexto('${mVal}')`);
+        }
+
+        const gridResp = document.getElementById(`gridResp-${rowIndex}`);
+        if (gridResp) {
+            gridResp.querySelector('.person-name span').textContent = rVal;
+            gridResp.querySelector('.phone-link span').textContent = cVal;
+            gridResp.querySelector('.phone-link').setAttribute('href', `https://wa.me/55${cVal.replace(/\D/g, '')}`);
+        }
+
+        const gridLocal = document.getElementById(`gridLocal-${rowIndex}`);
+        if (gridLocal) {
+            gridLocal.querySelector('.local-text').textContent = lVal;
+        }
+
+        const gridBtnWpp = document.getElementById(`gridBtnWpp-${rowIndex}`);
+        if (gridBtnWpp) {
+            gridBtnWpp.href = gerarLinkWhatsapp(item, selectedIndex);
         }
     };
 
@@ -1030,7 +1143,10 @@
             tabelaCorpo.innerHTML += `
                 <tr>
                     <td>
-                        <span class="client-name" onclick="abrirHistoricoCliente('${item.id}')" title="${tooltipText}">${item.cliente}</span>
+                        <div class="client-name-container">
+                            <span class="client-name" onclick="abrirHistoricoCliente('${item.id}')" title="${tooltipText}">${item.cliente}</span>
+                            <span class="equip-count-badge" title="${maxLines} equipamento(s) cadastrado(s)">${maxLines} eq.</span>
+                        </div>
                     </td>
                     <td>
                         <div class="card-box-container" id="cardMaq-${globalIndex}">
@@ -1090,6 +1206,145 @@
         atualizarPaginacao(totalItens);
     }
 
+    // RENDERIZAÇÃO EM MODO GRID/CARDS COM OS MESMOS CARDS INTERATIVOS DA LISTA
+    function renderizarGrid() {
+        const containerGrid = document.getElementById('containerGrid');
+        containerGrid.innerHTML = '';
+
+        if (cadastrosFiltrados.length === 0) {
+            containerGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 30px;">Nenhum registro encontrado.</div>';
+            atualizarPaginacao(0);
+            return;
+        }
+
+        const totalItens = cadastrosFiltrados.length;
+        const totalPaginas = Math.ceil(totalItens / itensPorPagina) || 1;
+        if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+
+        const inicio = (paginaAtual - 1) * itensPorPagina;
+        const fim = Math.min(inicio + itensPorPagina, totalItens);
+        const itensPagina = cadastrosFiltrados.slice(inicio, fim);
+
+        itensPagina.forEach((item, relativeIndex) => {
+            const globalIndex = inicio + relativeIndex;
+            let arrSeries = (item.serie || '').split('\n').filter(s => s.trim() !== '');
+            let arrModelos = (item.modelo || '').split('\n').filter(m => m.trim() !== '');
+            let arrResponsaveis = (item.responsavel || '').split('\n').filter(r => r.trim() !== '');
+            let arrContatos = (item.contato || '').split('\n').filter(c => c.trim() !== '');
+            let arrLocais = item.local ? item.local.split('\n').filter(l => l.trim() !== '') : [];
+
+            let maxLines = Math.max(arrSeries.length, arrModelos.length, arrResponsaveis.length, arrContatos.length, arrLocais.length);
+            const linkWhatsapp = gerarLinkWhatsapp(item, 0);
+
+            const sInicial = arrSeries[0] || '';
+            const mInicial = arrModelos[0] || '';
+            const rInicial = arrResponsaveis[0] || '';
+            const cInicial = arrContatos[0] || '';
+            const lInicial = arrLocais[0] || '';
+
+            const gerarOptionsMaquinas = () => {
+                let opts = '';
+                for (let i = 0; i < maxLines; i++) {
+                    let s = arrSeries[i] || arrSeries[arrSeries.length - 1] || '';
+                    let m = arrModelos[i] || arrModelos[arrModelos.length - 1] || '';
+                    let label = s ? `${s} - ${m}` : m;
+                    opts += `<option value="${i}">${label}</option>`;
+                }
+                return opts;
+            };
+
+            const gerarOptionsGenerico = (arr) => {
+                let opts = '';
+                for (let i = 0; i < maxLines; i++) {
+                    let val = arr[i] || arr[arr.length - 1] || `Opção ${i+1}`;
+                    opts += `<option value="${i}">${val}</option>`;
+                }
+                return opts;
+            };
+
+            const selectMaqHtml = maxLines > 1 ? `
+                <i class="fa-solid fa-chevron-down select-card-trigger"></i>
+                <select class="combo-select-card" onchange="sincronizarTodos(${globalIndex}, this.value)">${gerarOptionsMaquinas()}</select>
+            ` : '';
+
+            const selectRespHtml = maxLines > 1 ? `
+                <i class="fa-solid fa-chevron-down select-card-trigger"></i>
+                <select class="combo-select-card" onchange="sincronizarTodos(${globalIndex}, this.value)">${gerarOptionsGenerico(arrResponsaveis)}</select>
+            ` : '';
+
+            const selectLocalHtml = maxLines > 1 ? `
+                <i class="fa-solid fa-chevron-down select-card-trigger"></i>
+                <select class="combo-select-card" onchange="sincronizarTodos(${globalIndex}, this.value)">${gerarOptionsGenerico(arrLocais)}</select>
+            ` : '';
+
+            containerGrid.innerHTML += `
+                <div class="grid-card-item">
+                    <div class="grid-card-header">
+                        <div>
+                            <div class="client-name" onclick="abrirHistoricoCliente('${item.id}')">${item.cliente}</div>
+                            <small style="color: var(--text-muted);">${maxLines} equipamento(s)</small>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <!-- CARD MÁQUINA / SÉRIE -->
+                        <div class="card-box-container" id="gridMaq-${globalIndex}">
+                            ${selectMaqHtml}
+                            <div class="card-row">
+                                <span class="badge-serie">
+                                    <i class="fa-solid fa-barcode" style="color: var(--accent);"></i> 
+                                    <span class="badge-text">Série: ${sInicial}</span>
+                                </span>
+                                <button class="btn-copy-inline badge-copy-btn" onclick="copiarTexto('${sInicial}')" title="Copiar Série"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <div class="card-row" style="margin-top: 6px;">
+                                <div class="machine-title">
+                                    <i class="fa-solid fa-print" style="color: var(--text-muted); font-size: 12px;"></i>
+                                    <span class="machine-title-text">${mInicial}</span>
+                                    <button class="btn-copy-inline machine-copy-btn" onclick="copiarTexto('${mInicial}')" title="Copiar Modelo"><i class="fa-regular fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD RESPONSÁVEL / CONTATO -->
+                        <div class="card-box-container" id="gridResp-${globalIndex}">
+                            ${selectRespHtml}
+                            <div class="card-row">
+                                <div class="person-name">
+                                    <i class="fa-solid fa-user-gear" style="color: var(--text-muted); font-size: 12px;"></i>
+                                    <span>${rInicial}</span>
+                                </div>
+                            </div>
+                            <div class="card-row" style="margin-top: 6px;">
+                                <a href="https://wa.me/55${cInicial.replace(/\D/g, '')}" target="_blank" class="phone-link">
+                                    <i class="fa-brands fa-whatsapp" style="color: #25D366; font-size: 13px;"></i>
+                                    <span>${cInicial}</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- CARD LOCALIZAÇÃO -->
+                        <div class="card-box-container" id="gridLocal-${globalIndex}">
+                            ${selectLocalHtml}
+                            <div class="card-row">
+                                <i class="fa-solid fa-location-dot" style="color: #38bdf8; font-size: 12px;"></i>
+                                <span class="local-text" style="font-weight: 600; color: var(--primary); font-size: 12px;">${lInicial || '-'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content: flex-end; gap: 8px; margin-top: 5px;">
+                        <a href="${linkWhatsapp}" id="gridBtnWpp-${globalIndex}" target="_blank" class="btn-whatsapp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                        <button class="btn-editar" onclick="editarCadastro('${item.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-excluir" onclick="excluirCadastro('${item.id}')"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+            `;
+        });
+
+        atualizarPaginacao(totalItens);
+    }
+
     function atualizarPaginacao(total) {
         const totalPaginas = Math.ceil(total / itensPorPagina) || 1;
         document.getElementById('paginationInfo').textContent = `Mostrando ${total === 0 ? 0 : (paginaAtual - 1) * itensPorPagina + 1} a ${Math.min(paginaAtual * itensPorPagina, total)} de ${total} registros`;
@@ -1101,13 +1356,13 @@
 
     window.mudarPagina = function(delta) {
         paginaAtual += delta;
-        renderizarTabela();
+        renderizarExibicao();
     }
 
     window.alterarItensPorPagina = function(valor) {
         itensPorPagina = parseInt(valor, 10);
         paginaAtual = 1;
-        renderizarTabela();
+        renderizarExibicao();
     }
 
     window.editarCadastro = function(id) {
@@ -1117,7 +1372,7 @@
         ['cliente', 'responsavel', 'modelo', 'serie', 'contato', 'local'].forEach(field => {
             document.getElementById(field).value = item[field] || '';
         });
-        
+
         editandoId = id;
         btnSalvar.innerHTML = '<i class="fa-solid fa-check"></i> Atualizar'; 
         btnSalvar.style.backgroundColor = 'var(--warning)';
