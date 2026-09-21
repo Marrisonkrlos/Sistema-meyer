@@ -146,7 +146,20 @@
         td:last-child { border-right: 1px solid var(--border); border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
 
         .client-name { font-weight: 700; color: var(--primary); font-size: 15px; display: block; line-height: 1.2; }
-        .client-date { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+        .client-date { font-size: 11px; color: var(--text-muted); margin-top: 6px; position: relative; cursor: pointer; }
+        
+        /* HOVER PARA MOSTRAR QUEM MODIFICOU */
+        .user-mod-info {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .client-date:hover .user-mod-info {
+            display: inline;
+            opacity: 1;
+            color: var(--accent);
+            font-weight: 600;
+        }
 
         /* ESTILOS DOS CARDS (SÉRIE, MÁQUINA, RESPONSÁVEL) */
         .card-box-container {
@@ -155,14 +168,14 @@
             border-radius: 8px;
             padding: 10px 12px;
             position: relative;
-            min-width: 200px;
+            min-width: 220px;
         }
 
         .card-row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 8px;
+            justify-content: flex-start;
+            gap: 6px;
         }
 
         .card-row + .card-row {
@@ -182,16 +195,19 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .btn-copy {
+        /* BOTÃO DE COPIAR GRUDADO AO TEXTO */
+        .btn-copy-inline {
             background: transparent;
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 12px;
-            padding: 2px 4px;
+            font-size: 13px;
+            padding: 0 4px;
+            display: inline-flex;
+            align-items: center;
             transition: color 0.2s;
         }
-        .btn-copy:hover { color: var(--accent); }
+        .btn-copy-inline:hover { color: var(--accent); }
 
         .machine-title {
             font-weight: 700;
@@ -199,8 +215,7 @@
             color: var(--primary);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            width: 100%;
+            gap: 6px;
         }
 
         .person-name {
@@ -779,7 +794,7 @@
         if (cardMaq) {
             cardMaq.querySelector('.badge-text').textContent = `Série: ${sVal}`;
             cardMaq.querySelector('.badge-copy-btn').setAttribute('onclick', `copiarTexto('${sVal}')`);
-            cardMaq.querySelector('.machine-title span').textContent = mVal;
+            cardMaq.querySelector('.machine-title-text').textContent = mVal;
             cardMaq.querySelector('.machine-copy-btn').setAttribute('onclick', `copiarTexto('${mVal}')`);
         }
 
@@ -826,9 +841,10 @@
             const linkWhatsapp = gerarLinkWhatsapp(item, 0);
             const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : '-';
             
+            // QUEM MODIFICOU (SÓ APARECE AO PASSAR O MOUSE)
             let autorInfo = '';
             if (isAdm && item.modificado_por) {
-                autorInfo = ` por ${item.modificado_por.split('@')[0]}`;
+                autorInfo = `<span class="user-mod-info"> por ${item.modificado_por.split('@')[0]}</span>`;
             }
 
             const sInicial = arrSeries[0] || '';
@@ -864,12 +880,12 @@
                                 <span class="badge-serie">
                                     <i class="fa-solid fa-barcode"></i> <span class="badge-text">Série: ${sInicial}</span>
                                 </span>
-                                <button class="btn-copy badge-copy-btn" onclick="copiarTexto('${sInicial}')" title="Copiar Série"><i class="fa-regular fa-copy"></i></button>
+                                <button class="btn-copy-inline badge-copy-btn" onclick="copiarTexto('${sInicial}')" title="Copiar Série"><i class="fa-regular fa-copy"></i></button>
                             </div>
                             <div class="card-row" style="margin-top: 10px;">
                                 <div class="machine-title">
-                                    <span>${mInicial}</span>
-                                    <button class="btn-copy machine-copy-btn" onclick="copiarTexto('${mInicial}')" title="Copiar Modelo"><i class="fa-regular fa-copy"></i></button>
+                                    <span class="machine-title-text">${mInicial}</span>
+                                    <button class="btn-copy-inline machine-copy-btn" onclick="copiarTexto('${mInicial}')" title="Copiar Modelo"><i class="fa-regular fa-copy"></i></button>
                                 </div>
                             </div>
                         </div>
