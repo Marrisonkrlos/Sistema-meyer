@@ -677,6 +677,9 @@
         };
 
         if (editandoId) { 
+            // Atualiza também o created_at para refletir a nova data/hora de edição
+            dados.created_at = new Date().toISOString();
+
             const { error } = await _supabase.from('clientes').update(dados).eq('id', editandoId);
             if (error) {
                 mostrarToast("Erro ao atualizar registro.", "error");
