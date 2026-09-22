@@ -633,7 +633,14 @@
         } else if (aba === 'contatos') {
             document.getElementById('abaContatos').classList.remove('hidden');
             document.getElementById('btnNavContatos').classList.add('active');
-            carregarERenderizar();
+            
+            // Troca instantânea utilizando cache se os dados já existirem
+            if (cadastros.length > 0) {
+                filtrarContatos();
+                carregarERenderizar(true); // Atualização silenciosa em segundo plano
+            } else {
+                carregarERenderizar(false);
+            }
         }
     };
 
@@ -815,9 +822,11 @@
         return texto.split('\n').map(l => l.trim()).filter(l => l !== '').join('\n');
     }
 
-    async function carregarERenderizar() {
-        const tabelaCorpo = document.getElementById('tabelaCorpo');
-        tabelaCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando contatos...</td></tr>';
+    async function carregarERenderizar(silencioso = false) {
+        if (!silencioso && cadastros.length === 0) {
+            const tabelaCorpo = document.getElementById('tabelaCorpo');
+            tabelaCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando contatos...</td></tr>';
+        }
 
         try {
             const { data, error } = await _supabase.from('clientes').select('*');
@@ -827,7 +836,7 @@
             localStorage.setItem('meyer_cache_clientes', JSON.stringify(cadastros));
         } catch (erro) {
             console.warn("Modo Offline ativado ou falha de rede:", erro);
-            mostrarToast("Modo Offline (Cache)", "error");
+            if (!silencioso) mostrarToast("Modo Offline (Cache)", "error");
             const cache = localStorage.getItem('meyer_cache_clientes');
             cadastros = cache ? JSON.parse(cache) : [];
         }
@@ -876,7 +885,6 @@
         const btnClear = document.getElementById('btnClearSearch');
 
         btnClear.style.display = termo ? 'block' : 'none';
-        paginaAtual = 1;
 
         cadastrosFiltrados = cadastros.filter(c => {
             if (!termo) return true;
