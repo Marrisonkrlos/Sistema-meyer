@@ -207,6 +207,7 @@
             background: transparent; border: none; color: var(--text-muted);
             cursor: pointer; font-size: 12px; padding: 0 4px; display: inline-flex;
             align-items: center; justify-content: center; transition: color 0.2s;
+            position: relative; z-index: 20;
         }
         .btn-copy-inline:hover { color: var(--accent); }
 
@@ -658,6 +659,7 @@
     document.getElementById('btnModalConfirmAction').onclick = () => fecharModalConfirm(true);
 
     window.copiarTexto = function(texto) {
+        if (window.event) window.event.stopPropagation();
         if (!texto) return;
         navigator.clipboard.writeText(texto).then(() => {
             mostrarToast("Copiado para a área de transferência!");
