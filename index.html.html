@@ -345,6 +345,29 @@
     </div>
 </div>
 
+<!-- MODAL SELEÇÃO DE EQUIPAMENTOS PARA WHATSAPP -->
+<div id="modalWppSelecao" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width: 500px; text-align: left;">
+        <h3><i class="fa-brands fa-whatsapp" style="color: var(--success);"></i> Selecionar Equipamentos</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
+            Selecione abaixo os equipamentos que precisam de atenção para incluir no texto da mensagem:
+        </p>
+
+        <div id="wppListaEquipamentos" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding: 5px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); margin-bottom: 15px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 5px; display: block;">Selecione o Contato / WhatsApp:</label>
+            <select id="wppSelectContato" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 13px;"></select>
+        </div>
+
+        <div class="modal-actions" style="justify-content: flex-end;">
+            <button class="modal-btn modal-btn-cancel" onclick="fecharModalWpp()">Cancelar</button>
+            <button class="modal-btn" style="background-color: var(--success); color: white;" onclick="enviarWhatsappSelecionados()"><i class="fa-brands fa-whatsapp"></i> Enviar Mensagem</button>
+        </div>
+    </div>
+</div>
+
 <!-- TELA DE AUTENTICAÇÃO -->
 <div id="telaAuth">
     <img src="meyer.jpeg" alt="Meyer Tecnologia" class="logo-meyer" onerror="this.style.display='none'">
@@ -940,32 +963,78 @@
         }
     }
 
-    function gerarLinkWhatsapp(cadastro, selectedIndex = 0) {
-        const arrContatosOriginal = (cadastro.contato || '').split('\n').filter(c => c.trim() !== '');
-        const arrModelosOriginal = (cadastro.modelo || '').split('\n').filter(m => m.trim() !== '');
-        const arrSeriesOriginal = (cadastro.serie || '').split('\n').filter(s => s.trim() !== '');
-        
-        const num = arrContatosOriginal[selectedIndex] || arrContatosOriginal[arrContatosOriginal.length - 1] || "";
-        const numeroLimpo = num.replace(/\D/g, '');
-        let msgPadrao = "";
+    // GERENCIADOR DE MODAL E MENSAGENS PARA WHATSAPP
+    let clienteWppAtual = null;
 
-        if (arrContatosOriginal.length <= 1 && arrModelosOriginal.length > 1) {
-            let listaMaquinas = "";
-            const maxMaquinas = Math.max(arrModelosOriginal.length, arrSeriesOriginal.length);
-            for (let i = 0; i < maxMaquinas; i++) {
-                let m = arrModelosOriginal[i] || arrModelosOriginal[arrModelosOriginal.length - 1] || "";
-                let s = arrSeriesOriginal[i] || arrSeriesOriginal[arrSeriesOriginal.length - 1] || "";
-                listaMaquinas += `\n- ${m} (Série: ${s})`;
-            }
-            msgPadrao = `Olá, Tudo bem? Bem vindo(a) ao Atendimento da Meyer Soluções. Poderia nos ajudar com as impressoras:${listaMaquinas}`;
-        } else {
-            const modeloSelecionado = arrModelosOriginal[selectedIndex] || arrModelosOriginal[arrModelosOriginal.length - 1] || "";
-            const serieSelecionada = arrSeriesOriginal[selectedIndex] || arrSeriesOriginal[arrSeriesOriginal.length - 1] || "";
-            msgPadrao = `Olá, Tudo bem? Bem vindo(a) ao Atendimento da Meyer Soluções. Poderia nos ajudar com a impressora ${modeloSelecionado} - Série: ${serieSelecionada} ?`;
+    window.abrirModalWpp = function(id) {
+        if (window.event) window.event.stopPropagation();
+        const item = cadastros.find(c => c.id === id);
+        if (!item) return;
+
+        clienteWppAtual = item;
+
+        const arrModelos = (item.modelo || '').split('\n').filter(m => m.trim() !== '');
+        const arrSeries = (item.serie || '').split('\n').filter(s => s.trim() !== '');
+        const arrContatos = (item.contato || '').split('\n').filter(c => c.trim() !== '');
+
+        const containerLista = document.getElementById('wppListaEquipamentos');
+        containerLista.innerHTML = '';
+
+        const maxLines = Math.max(arrModelos.length, arrSeries.length);
+
+        for (let i = 0; i < maxLines; i++) {
+            const m = arrModelos[i] || arrModelos[arrModelos.length - 1] || 'Modelo N/A';
+            const s = arrSeries[i] || arrSeries[arrSeries.length - 1] || 'Série N/A';
+
+            containerLista.innerHTML += `
+                <label class="checkbox-label" style="background: var(--card-bg); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
+                    <input type="checkbox" class="chk-wpp-equip" value="${i}" checked>
+                    <span><strong>${m}</strong> - <small style="color: var(--text-muted);">SN: ${s}</small></span>
+                </label>
+            `;
         }
 
-        return `https://wa.me/55${numeroLimpo}?text=${encodeURIComponent(msgPadrao)}`;
-    }
+        const selectContato = document.getElementById('wppSelectContato');
+        selectContato.innerHTML = '';
+        arrContatos.forEach((ct) => {
+            selectContato.innerHTML += `<option value="${ct}">${ct}</option>`;
+        });
+
+        document.getElementById('modalWppSelecao').classList.remove('hidden');
+    };
+
+    window.fecharModalWpp = function() {
+        document.getElementById('modalWppSelecao').classList.add('hidden');
+        clienteWppAtual = null;
+    };
+
+    window.enviarWhatsappSelecionados = function() {
+        if (!clienteWppAtual) return;
+
+        const checkboxes = document.querySelectorAll('.chk-wpp-equip:checked');
+        if (checkboxes.length === 0) {
+            mostrarToast("Selecione pelo menos um equipamento.", "error");
+            return;
+        }
+
+        const arrModelos = (clienteWppAtual.modelo || '').split('\n').filter(m => m.trim() !== '');
+        const arrSeries = (clienteWppAtual.serie || '').split('\n').filter(s => s.trim() !== '');
+        const contatoSelecionado = document.getElementById('wppSelectContato').value || '';
+        const numeroLimpo = contatoSelecionado.replace(/\D/g, '');
+
+        let textoEquipamentos = "";
+        checkboxes.forEach(chk => {
+            const idx = parseInt(chk.value, 10);
+            const m = arrModelos[idx] || arrModelos[arrModelos.length - 1] || 'Modelo N/A';
+            const s = arrSeries[idx] || arrSeries[arrSeries.length - 1] || 'Série N/A';
+            textoEquipamentos += `\n- ${m} (Série: ${s})`;
+        });
+
+        const msg = `Olá, Tudo bem? Bem vindo(a) ao Atendimento da Meyer Soluções. Poderia nos ajudar com a(s) impressora(s):${textoEquipamentos} ?`;
+
+        window.open(`https://wa.me/55${numeroLimpo}?text=${encodeURIComponent(msg)}`, '_blank');
+        fecharModalWpp();
+    };
 
     window.abrirHistoricoCliente = async function(id) {
         const { data: { session } } = await _supabase.auth.getSession();
@@ -1035,11 +1104,6 @@
             cardLocal.querySelector('.local-text').textContent = lVal;
         }
 
-        const btnWpp = document.getElementById(`btnWpp-${rowIndex}`);
-        if (btnWpp) {
-            btnWpp.href = gerarLinkWhatsapp(item, selectedIndex);
-        }
-
         // Sincroniza também no modo Grid caso o elemento esteja presente
         const gridMaq = document.getElementById(`gridMaq-${rowIndex}`);
         if (gridMaq) {
@@ -1059,11 +1123,6 @@
         const gridLocal = document.getElementById(`gridLocal-${rowIndex}`);
         if (gridLocal) {
             gridLocal.querySelector('.local-text').textContent = lVal;
-        }
-
-        const gridBtnWpp = document.getElementById(`gridBtnWpp-${rowIndex}`);
-        if (gridBtnWpp) {
-            gridBtnWpp.href = gerarLinkWhatsapp(item, selectedIndex);
         }
     };
 
@@ -1099,7 +1158,6 @@
 
             let maxLines = Math.max(arrSeries.length, arrModelos.length, arrResponsaveis.length, arrContatos.length, arrLocais.length);
             
-            const linkWhatsapp = gerarLinkWhatsapp(item, 0);
             const dataFormatada = item.created_at ? new Date(item.created_at).toLocaleString('pt-BR') : '';
             
             let autorInfo = '';
@@ -1205,7 +1263,7 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="${linkWhatsapp}" id="btnWpp-${globalIndex}" target="_blank" class="btn-whatsapp" title="Abrir no WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                            <button type="button" class="btn-whatsapp" onclick="abrirModalWpp('${item.id}')" title="Abrir no WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
                             <button class="btn-editar" onclick="editarCadastro('${item.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
                             <button class="btn-excluir" onclick="excluirCadastro('${item.id}')" title="Excluir"><i class="fa-solid fa-xmark"></i></button>
                         </div>
@@ -1244,7 +1302,6 @@
             let arrLocais = item.local ? item.local.split('\n').filter(l => l.trim() !== '') : [];
 
             let maxLines = Math.max(arrSeries.length, arrModelos.length, arrResponsaveis.length, arrContatos.length, arrLocais.length);
-            const linkWhatsapp = gerarLinkWhatsapp(item, 0);
 
             const sInicial = arrSeries[0] || '';
             const mInicial = arrModelos[0] || '';
@@ -1344,7 +1401,7 @@
                     </div>
 
                     <div style="display:flex; justify-content: flex-end; gap: 8px; margin-top: 5px;">
-                        <a href="${linkWhatsapp}" id="gridBtnWpp-${globalIndex}" target="_blank" class="btn-whatsapp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                        <button type="button" class="btn-whatsapp" onclick="abrirModalWpp('${item.id}')" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
                         <button class="btn-editar" onclick="editarCadastro('${item.id}')"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn-excluir" onclick="excluirCadastro('${item.id}')"><i class="fa-solid fa-xmark"></i></button>
                     </div>
