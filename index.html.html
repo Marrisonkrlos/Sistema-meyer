@@ -316,6 +316,32 @@
             display: inline-flex; align-items: center; justify-content: center;
         }
 
+        /* NOTIFICAÇÃO FLUTUANTE (TOAST) AJUSTADA PARA FLUTUAR E SUMIR */
+        #toast {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 280px;
+            max-width: 90%;
+            background-color: var(--success);
+            color: #ffffff;
+            text-align: center;
+            border-radius: 30px;
+            padding: 12px 24px;
+            z-index: 3000;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease-in-out;
+        }
+        #toast.show {
+            top: 25px;
+            opacity: 1;
+        }
+
         @media (max-width: 768px) {
             .app-header { flex-direction: column; gap: 15px; padding: 15px; }
             .nav-menu { width: 100%; justify-content: center; flex-wrap: wrap; }
@@ -728,12 +754,26 @@
         }
     };
 
+    // FUNÇÃO TOAST CORRIGIDA PARA FLUTUAR E SUMIR AUTOMATICAMENTE
+    let toastTimeout = null;
     function mostrarToast(mensagem, tipo="success") {
         const toast = document.getElementById("toast");
+        
+        // Cancela contagem prévia se houver
+        if (toastTimeout) {
+            clearTimeout(toastTimeout);
+        }
+
         toast.textContent = mensagem;
         toast.style.backgroundColor = tipo === "error" ? "var(--danger)" : "var(--success)";
-        toast.className = "show";
-        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        
+        // Exibe o toast com animação
+        toast.classList.add("show");
+
+        // Oculta após 3 segundos
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000);
     }
 
     let modalResolver = null;
@@ -753,7 +793,6 @@
         if (window.event) window.event.stopPropagation();
         if (!texto) return;
 
-        // Limpa marcações como (Záp) ao copiar para a área de transferência
         const textoLimpo = texto.replace(/\s*\((záp|zap|whatsapp)\)/gi, '').trim();
 
         navigator.clipboard.writeText(textoLimpo).then(() => {
@@ -763,12 +802,10 @@
         });
     }
 
-    // Função que remove o texto (Záp) da string do modelo e renderiza apenas o ícone do WhatsApp
     function renderizarModeloComBadge(textoModelo) {
         if (!textoModelo) return { textoFormatado: '', badgeHtml: '' };
         
         const eZap = /záp|zap|whatsapp/i.test(textoModelo);
-        // Remove a palavra (Záp) do texto exibido
         const textoFormatado = textoModelo.replace(/\s*\((záp|zap|whatsapp)\)/gi, '').trim();
         const badgeHtml = eZap ? `<span class="badge-zap-tag" title="Coleta/atendimento exclusivo pelo WhatsApp"><i class="fa-brands fa-whatsapp"></i></span>` : '';
 
