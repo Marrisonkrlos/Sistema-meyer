@@ -357,7 +357,7 @@
         </div>
 
         <div style="margin-bottom: 15px;">
-            <label style="font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 5px; display: block;">Selecione o Contato / WhatsApp:</label>
+            <label style="font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 5px; display: block;">Selecione o Responsável / Contato:</label>
             <select id="wppSelectContato" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 13px;"></select>
         </div>
 
@@ -976,6 +976,7 @@
         const arrModelos = (item.modelo || '').split('\n').filter(m => m.trim() !== '');
         const arrSeries = (item.serie || '').split('\n').filter(s => s.trim() !== '');
         const arrContatos = (item.contato || '').split('\n').filter(c => c.trim() !== '');
+        const arrResponsaveis = (item.responsavel || '').split('\n').filter(r => r.trim() !== '');
 
         const containerLista = document.getElementById('wppListaEquipamentos');
         containerLista.innerHTML = '';
@@ -996,9 +997,17 @@
 
         const selectContato = document.getElementById('wppSelectContato');
         selectContato.innerHTML = '';
-        arrContatos.forEach((ct) => {
-            selectContato.innerHTML += `<option value="${ct}">${ct}</option>`;
-        });
+
+        const maxContatos = Math.max(arrContatos.length, arrResponsaveis.length);
+        for (let i = 0; i < maxContatos; i++) {
+            const ct = arrContatos[i] || arrContatos[arrContatos.length - 1] || '';
+            const resp = arrResponsaveis[i] || arrResponsaveis[arrResponsaveis.length - 1] || 'Responsável';
+            
+            if (ct) {
+                const labelCombo = resp ? `${resp} - ${ct}` : ct;
+                selectContato.innerHTML += `<option value="${i}" data-numero="${ct}" data-nome="${resp}">${labelCombo}</option>`;
+            }
+        }
 
         document.getElementById('modalWppSelecao').classList.remove('hidden');
     };
@@ -1019,8 +1028,17 @@
 
         const arrModelos = (clienteWppAtual.modelo || '').split('\n').filter(m => m.trim() !== '');
         const arrSeries = (clienteWppAtual.serie || '').split('\n').filter(s => s.trim() !== '');
-        const contatoSelecionado = document.getElementById('wppSelectContato').value || '';
-        const numeroLimpo = contatoSelecionado.replace(/\D/g, '');
+        
+        const selectContato = document.getElementById('wppSelectContato');
+        const optionSelecionada = selectContato.options[selectContato.selectedIndex];
+        
+        if (!optionSelecionada) {
+            mostrarToast("Selecione um contato válido.", "error");
+            return;
+        }
+
+        const numeroLimpo = (optionSelecionada.getAttribute('data-numero') || '').replace(/\D/g, '');
+        const nomeResponsavel = optionSelecionada.getAttribute('data-nome') || '';
 
         let textoEquipamentos = "";
         checkboxes.forEach(chk => {
@@ -1030,7 +1048,8 @@
             textoEquipamentos += `\n- ${m} (Série: ${s})`;
         });
 
-        const msg = `Olá, Tudo bem? Bem vindo(a) ao Atendimento da Meyer Soluções. Poderia nos ajudar com a(s) impressora(s):${textoEquipamentos} ?`;
+        const saudacao = nomeResponsavel ? `Olá ${nomeResponsavel}, Tudo bem?` : 'Olá, Tudo bem?';
+        const msg = `${saudacao} Bem vindo(a) ao Atendimento da Meyer Soluções. Poderia nos ajudar com a(s) impressora(s):${textoEquipamentos} ?`;
 
         window.open(`https://wa.me/55${numeroLimpo}?text=${encodeURIComponent(msg)}`, '_blank');
         fecharModalWpp();
