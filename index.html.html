@@ -752,17 +752,27 @@
     window.copiarTexto = function(texto) {
         if (window.event) window.event.stopPropagation();
         if (!texto) return;
-        navigator.clipboard.writeText(texto).then(() => {
+
+        // Limpa marcações como (Záp) ao copiar para a área de transferência
+        const textoLimpo = texto.replace(/\s*\((záp|zap|whatsapp)\)/gi, '').trim();
+
+        navigator.clipboard.writeText(textoLimpo).then(() => {
             mostrarToast("Copiado para a área de transferência!");
         }).catch(() => {
             mostrarToast("Erro ao copiar.", "error");
         });
     }
 
-    function renderizarBadgeZap(textoModelo) {
-        if (!textoModelo) return '';
+    // Função que remove o texto (Záp) da string do modelo e renderiza apenas o ícone do WhatsApp
+    function renderizarModeloComBadge(textoModelo) {
+        if (!textoModelo) return { textoFormatado: '', badgeHtml: '' };
+        
         const eZap = /záp|zap|whatsapp/i.test(textoModelo);
-        return eZap ? `<span class="badge-zap-tag" title="Coleta/atendimento exclusivo pelo WhatsApp"><i class="fa-brands fa-whatsapp"></i></span>` : '';
+        // Remove a palavra (Záp) do texto exibido
+        const textoFormatado = textoModelo.replace(/\s*\((záp|zap|whatsapp)\)/gi, '').trim();
+        const badgeHtml = eZap ? `<span class="badge-zap-tag" title="Coleta/atendimento exclusivo pelo WhatsApp"><i class="fa-brands fa-whatsapp"></i></span>` : '';
+
+        return { textoFormatado, badgeHtml };
     }
 
     window.marcarLinhaAtualZap = function() {
@@ -932,7 +942,6 @@
         }
 
         try {
-            // Busca apenas registros ATIVOS (deleted_at nulo)
             const { data, error } = await _supabase
                 .from('clientes')
                 .select('*')
@@ -953,7 +962,6 @@
         filtrarContatos();
     }
 
-    // CARREGAR LISTA DE ITENS NA LIXEIRA (DELETED_AT NOT NULL)
     async function carregarLixeira() {
         const tabelaLixeiraCorpo = document.getElementById('tabelaLixeiraCorpo');
         tabelaLixeiraCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando lixeira...</td></tr>';
@@ -976,7 +984,8 @@
             data.forEach(item => {
                 const dataExclusao = item.deleted_at ? new Date(item.deleted_at).toLocaleString('pt-BR') : '-';
                 const modificadoPor = item.modificado_por || 'Não registrado';
-                const mInicial = (item.modelo || '').split('\n')[0] || '-';
+                const rawModelo = (item.modelo || '').split('\n')[0] || '-';
+                const { textoFormatado: mInicial } = renderizarModeloComBadge(rawModelo);
                 const sInicial = (item.serie || '').split('\n')[0] || '-';
 
                 tabelaLixeiraCorpo.innerHTML += `
@@ -998,7 +1007,6 @@
         }
     }
 
-    // RESTAURAR CLIENTE DA LIXEIRA
     window.restaurarCliente = async function(id) {
         const { data: { session } } = await _supabase.auth.getSession();
         const userEmail = session?.user?.email || 'Desconhecido';
@@ -1136,9 +1144,9 @@
         const maxLines = Math.max(arrModelos.length, arrSeries.length);
 
         for (let i = 0; i < maxLines; i++) {
-            const m = arrModelos[i] || arrModelos[arrModelos.length - 1] || 'Modelo N/A';
+            const rawM = arrModelos[i] || arrModelos[arrModelos.length - 1] || 'Modelo N/A';
+            const { textoFormatado: m, badgeHtml: tagZap } = renderizarModeloComBadge(rawM);
             const s = arrSeries[i] || arrSeries[arrSeries.length - 1] || 'Série N/A';
-            const tagZap = renderizarBadgeZap(m);
 
             containerLista.innerHTML += `
                 <label class="checkbox-label" style="background: var(--card-bg); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
@@ -1195,7 +1203,8 @@
         let textoEquipamentos = "";
         checkboxes.forEach(chk => {
             const idx = parseInt(chk.value, 10);
-            const m = arrModelos[idx] || arrModelos[arrModelos.length - 1] || 'Modelo N/A';
+            const rawM = arrModelos[idx] || arrModelos[arrModelos.length - 1] || 'Modelo N/A';
+            const { textoFormatado: m } = renderizarModeloComBadge(rawM);
             const s = arrSeries[idx] || arrSeries[arrSeries.length - 1] || 'Série N/A';
             textoEquipamentos += `\n- ${m} (Série: ${s})`;
         });
@@ -1249,12 +1258,11 @@
         const getVal = (arr, idx) => arr[idx] || arr[arr.length - 1] || '';
 
         const sVal = getVal(arrSeries, selectedIndex);
-        const mVal = getVal(arrModelos, selectedIndex);
+        const rawMVal = getVal(arrModelos, selectedIndex);
+        const { textoFormatado: mVal, badgeHtml: badgeZap } = renderizarModeloComBadge(rawMVal);
         const rVal = getVal(arrResponsaveis, selectedIndex);
         const cVal = getVal(arrContatos, selectedIndex);
         const lVal = getVal(arrLocais, selectedIndex);
-
-        const badgeZap = renderizarBadgeZap(mVal);
 
         const cardMaq = document.getElementById(`cardMaq-${rowIndex}`);
         if (cardMaq) {
@@ -1339,18 +1347,18 @@
             const tooltipText = dataFormatada ? `🕒 Clique para abrir detalhes (Atualizado: ${dataFormatada}${autorInfo})` : 'Clique para ver o histórico';
 
             const sInicial = arrSeries[0] || '';
-            const mInicial = arrModelos[0] || '';
+            const rawMInicial = arrModelos[0] || '';
+            const { textoFormatado: mInicial, badgeHtml: badgeZapInicial } = renderizarModeloComBadge(rawMInicial);
             const rInicial = arrResponsaveis[0] || '';
             const cInicial = arrContatos[0] || '';
             const lInicial = arrLocais[0] || '';
-
-            const badgeZapInicial = renderizarBadgeZap(mInicial);
 
             const gerarOptionsMaquinas = () => {
                 let opts = '';
                 for (let i = 0; i < maxLines; i++) {
                     let s = arrSeries[i] || arrSeries[arrSeries.length - 1] || '';
-                    let m = arrModelos[i] || arrModelos[arrModelos.length - 1] || '';
+                    let rawM = arrModelos[i] || arrModelos[arrModelos.length - 1] || '';
+                    let { textoFormatado: m } = renderizarModeloComBadge(rawM);
                     let label = s ? `${s} - ${m}` : m;
                     opts += `<option value="${i}">${label}</option>`;
                 }
@@ -1476,18 +1484,18 @@
             let maxLines = Math.max(arrSeries.length, arrModelos.length, arrResponsaveis.length, arrContatos.length, arrLocais.length);
 
             const sInicial = arrSeries[0] || '';
-            const mInicial = arrModelos[0] || '';
+            const rawMInicial = arrModelos[0] || '';
+            const { textoFormatado: mInicial, badgeHtml: badgeZapInicial } = renderizarModeloComBadge(rawMInicial);
             const rInicial = arrResponsaveis[0] || '';
             const cInicial = arrContatos[0] || '';
             const lInicial = arrLocais[0] || '';
-
-            const badgeZapInicial = renderizarBadgeZap(mInicial);
 
             const gerarOptionsMaquinas = () => {
                 let opts = '';
                 for (let i = 0; i < maxLines; i++) {
                     let s = arrSeries[i] || arrSeries[arrSeries.length - 1] || '';
-                    let m = arrModelos[i] || arrModelos[arrModelos.length - 1] || '';
+                    let rawM = arrModelos[i] || arrModelos[arrModelos.length - 1] || '';
+                    let { textoFormatado: m } = renderizarModeloComBadge(rawM);
                     let label = s ? `${s} - ${m}` : m;
                     opts += `<option value="${i}">${label}</option>`;
                 }
@@ -1528,7 +1536,6 @@
                     </div>
                     
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <!-- CARD MÁQUINA / SÉRIE -->
                         <div class="card-box-container" id="gridMaq-${globalIndex}">
                             ${selectMaqHtml}
                             <div class="card-row">
@@ -1547,7 +1554,6 @@
                             </div>
                         </div>
 
-                        <!-- CARD RESPONSÁVEL / CONTATO -->
                         <div class="card-box-container" id="gridResp-${globalIndex}">
                             ${selectRespHtml}
                             <div class="card-row">
@@ -1564,7 +1570,6 @@
                             </div>
                         </div>
 
-                        <!-- CARD LOCALIZAÇÃO -->
                         <div class="card-box-container" id="gridLocal-${globalIndex}">
                             ${selectLocalHtml}
                             <div class="card-row">
