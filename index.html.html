@@ -316,7 +316,6 @@
             display: inline-flex; align-items: center; justify-content: center;
         }
 
-        /* NOTIFICAÇÃO FLUTUANTE (TOAST) AJUSTADA PARA FLUTUAR E SUMIR */
         #toast {
             position: fixed;
             top: -100px;
@@ -696,7 +695,6 @@
         telaAuth.classList.add('hidden');
         telaApp.classList.remove('hidden');
         
-        // Verifica permissões do usuário logado
         const { data: { session } } = await _supabase.auth.getSession();
         const emailUsuario = session?.user?.email || '';
         const isAdm = emailUsuario.toLowerCase() === EMAIL_ADM.toLowerCase();
@@ -754,12 +752,10 @@
         }
     };
 
-    // FUNÇÃO TOAST CORRIGIDA PARA FLUTUAR E SUMIR AUTOMATICAMENTE
     let toastTimeout = null;
     function mostrarToast(mensagem, tipo="success") {
         const toast = document.getElementById("toast");
         
-        // Cancela contagem prévia se houver
         if (toastTimeout) {
             clearTimeout(toastTimeout);
         }
@@ -767,10 +763,8 @@
         toast.textContent = mensagem;
         toast.style.backgroundColor = tipo === "error" ? "var(--danger)" : "var(--success)";
         
-        // Exibe o toast com animação
         toast.classList.add("show");
 
-        // Oculta após 3 segundos
         toastTimeout = setTimeout(() => {
             toast.classList.remove("show");
         }, 3000);
@@ -825,6 +819,9 @@
         }
         inputModelo.focus();
     };
+
+    // Mapeamento dos índices selecionados atualmente em cada linha/card da tabela
+    let selecaoCardsAtivos = {};
 
     // --- AUTENTICAÇÃO ---
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -1163,12 +1160,15 @@
     // GERENCIADOR DE MODAL E MENSAGENS PARA WHATSAPP
     let clienteWppAtual = null;
 
-    window.abrirModalWpp = function(id) {
+    window.abrirModalWpp = function(id, indexOriginal = 0) {
         if (window.event) window.event.stopPropagation();
         const item = cadastros.find(c => c.id === id);
         if (!item) return;
 
         clienteWppAtual = item;
+
+        // Se o índice selecionado no card existir, utiliza ele como o padrão ativo
+        const indexSelecionado = selecaoCardsAtivos[id] !== undefined ? selecaoCardsAtivos[id] : indexOriginal;
 
         const arrModelos = (item.modelo || '').split('\n').filter(m => m.trim() !== '');
         const arrSeries = (item.serie || '').split('\n').filter(s => s.trim() !== '');
@@ -1185,9 +1185,12 @@
             const { textoFormatado: m, badgeHtml: tagZap } = renderizarModeloComBadge(rawM);
             const s = arrSeries[i] || arrSeries[arrSeries.length - 1] || 'Série N/A';
 
+            // Marca como checado a impressora selecionada no card
+            const isChecked = parseInt(i, 10) === parseInt(indexSelecionado, 10) ? 'checked' : '';
+
             containerLista.innerHTML += `
                 <label class="checkbox-label" style="background: var(--card-bg); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px;">
-                    <input type="checkbox" class="chk-wpp-equip" value="${i}" checked>
+                    <input type="checkbox" class="chk-wpp-equip" value="${i}" ${isChecked}>
                     <span><strong>${m}</strong> ${tagZap} - <small style="color: var(--text-muted);">SN: ${s}</small></span>
                 </label>
             `;
@@ -1205,6 +1208,13 @@
                 const labelCombo = resp ? `${resp} - ${ct}` : ct;
                 selectContato.innerHTML += `<option value="${i}" data-numero="${ct}">${labelCombo}</option>`;
             }
+        }
+
+        // Seleciona automaticamente no combo de contatos a mesma posição do equipamento
+        if (selectContato.options.length > indexSelecionado) {
+            selectContato.selectedIndex = indexSelecionado;
+        } else if (selectContato.options.length > 0) {
+            selectContato.selectedIndex = selectContato.options.length - 1;
         }
 
         document.getElementById('modalWppSelecao').classList.remove('hidden');
@@ -1285,6 +1295,9 @@
     window.sincronizarTodos = function(rowIndex, selectedIndex) {
         const item = cadastrosFiltrados[rowIndex];
         if (!item) return;
+
+        // Salva a seleção ativa dessa empresa/cliente
+        selecaoCardsAtivos[item.id] = selectedIndex;
 
         let arrSeries = (item.serie || '').split('\n').filter(s => s.trim() !== '');
         let arrModelos = (item.modelo || '').split('\n').filter(m => m.trim() !== '');
