@@ -108,6 +108,8 @@
         .nav-btn.active { background: var(--accent); color: white; }
         .nav-btn.btn-sair { color: var(--danger); }
         .nav-btn.btn-sair:hover { background: var(--danger); color: white; }
+        .nav-btn.btn-lixeira { color: var(--warning); }
+        .nav-btn.btn-lixeira.active { background: var(--warning); color: white; }
 
         .app-content { padding: 15px 30px 30px 30px; }
 
@@ -130,17 +132,9 @@
         input::placeholder, textarea::placeholder { color: var(--text-muted); }
 
         .btn-fast-zap {
-            background: #25D366;
-            color: #ffffff;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.2s;
+            background: #25D366; color: #ffffff; border: none;
+            padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; transition: opacity 0.2s;
         }
         .btn-fast-zap:hover { opacity: 0.85; }
 
@@ -248,15 +242,16 @@
         }
 
         .action-buttons { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; }
-        .btn-whatsapp, .btn-excluir, .btn-editar { 
-            width: 32px; height: 32px; text-decoration: none; border-radius: 6px; 
+        .btn-whatsapp, .btn-excluir, .btn-editar, .btn-restaurar { 
+            height: 32px; text-decoration: none; border-radius: 6px; 
             font-size: 13px; display: inline-flex; align-items: center; justify-content: center; 
-            cursor: pointer; border: none; flex-shrink: 0; color: white; transition: opacity 0.2s;
+            cursor: pointer; border: none; flex-shrink: 0; color: white; transition: opacity 0.2s; padding: 0 10px;
         }
-        .btn-whatsapp { background-color: var(--success); }
-        .btn-editar { background-color: var(--warning); }
-        .btn-excluir { background-color: var(--danger); }
-        .btn-whatsapp:hover, .btn-editar:hover, .btn-excluir:hover { opacity: 0.85; }
+        .btn-whatsapp { background-color: var(--success); width: 32px; padding: 0; }
+        .btn-editar { background-color: var(--warning); width: 32px; padding: 0; }
+        .btn-excluir { background-color: var(--danger); width: 32px; padding: 0; }
+        .btn-restaurar { background-color: var(--success); font-weight: 600; gap: 5px; }
+        .btn-whatsapp:hover, .btn-editar:hover, .btn-excluir:hover, .btn-restaurar:hover { opacity: 0.85; }
 
         .grid-view-container {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-top: 10px;
@@ -316,15 +311,9 @@
         .history-item { padding: 8px 0; border-bottom: 1px dashed var(--border); }
 
         .badge-zap-tag {
-            background: #25D366;
-            color: #ffffff;
-            font-size: 11px;
-            padding: 3px 6px;
-            border-radius: 4px;
-            margin-left: 6px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            background: #25D366; color: #ffffff; font-size: 11px;
+            padding: 3px 6px; border-radius: 4px; margin-left: 6px;
+            display: inline-flex; align-items: center; justify-content: center;
         }
 
         @media (max-width: 768px) {
@@ -494,6 +483,7 @@
         <div class="nav-menu">
             <button class="nav-btn active" id="btnNavInicio" onclick="mudarAba('inicio')"><i class="fa-solid fa-house"></i> Início</button>
             <button class="nav-btn" id="btnNavContatos" onclick="mudarAba('contatos')"><i class="fa-solid fa-address-book"></i> Contatos</button>
+            <button class="nav-btn btn-lixeira hidden" id="btnNavLixeira" onclick="mudarAba('lixeira')"><i class="fa-solid fa-trash-can"></i> Lixeira</button>
             <button class="nav-btn btn-sair" onclick="fazerLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</button>
         </div>
     </div>
@@ -602,6 +592,29 @@
                 </div>
             </div>
         </div>
+
+        <!-- ABA 3: LIXEIRA DE REGISTROS (EXCLUSIVO ADM) -->
+        <div id="abaLixeira" class="hidden">
+            <h2 style="color: var(--danger);"><i class="fa-solid fa-trash-can"></i> Lixeira de Registros</h2>
+            <p style="text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+                Registros apagados por usuários ficam armazenados aqui. Clique em <strong>Restaurar</strong> para reativar o cliente.
+            </p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Máquina / Série</th>
+                            <th>Excluído Por</th>
+                            <th>Data de Exclusão</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaLixeiraCorpo"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -653,9 +666,22 @@
 
     let abaAtivaAtual = 'inicio';
 
-    function mostrarApp() {
+    async function mostrarApp() {
         telaAuth.classList.add('hidden');
         telaApp.classList.remove('hidden');
+        
+        // Verifica permissões do usuário logado
+        const { data: { session } } = await _supabase.auth.getSession();
+        const emailUsuario = session?.user?.email || '';
+        const isAdm = emailUsuario.toLowerCase() === EMAIL_ADM.toLowerCase();
+        
+        const btnNavLixeira = document.getElementById('btnNavLixeira');
+        if (isAdm) {
+            btnNavLixeira.classList.remove('hidden');
+        } else {
+            btnNavLixeira.classList.add('hidden');
+        }
+
         mudarAba(abaAtivaAtual); 
     }
 
@@ -665,6 +691,7 @@
         cadastrosFiltrados = [];
         abaAtivaAtual = 'inicio';
         document.getElementById('tabelaCorpo').innerHTML = '';
+        document.getElementById('tabelaLixeiraCorpo').innerHTML = '';
         telaApp.classList.add('hidden');
         telaAuth.classList.remove('hidden');
         alternarFormularios('login');
@@ -675,9 +702,11 @@
         abaAtivaAtual = aba;
         document.getElementById('abaInicio').classList.add('hidden');
         document.getElementById('abaContatos').classList.add('hidden');
+        document.getElementById('abaLixeira').classList.add('hidden');
         
         document.getElementById('btnNavInicio').classList.remove('active');
         document.getElementById('btnNavContatos').classList.remove('active');
+        document.getElementById('btnNavLixeira').classList.remove('active');
 
         if (aba === 'inicio') {
             document.getElementById('abaInicio').classList.remove('hidden');
@@ -686,13 +715,16 @@
             document.getElementById('abaContatos').classList.remove('hidden');
             document.getElementById('btnNavContatos').classList.add('active');
             
-            // Troca instantânea utilizando cache se os dados já existirem
             if (cadastros.length > 0) {
                 filtrarContatos();
-                carregarERenderizar(true); // Atualização silenciosa em segundo plano
+                carregarERenderizar(true);
             } else {
                 carregarERenderizar(false);
             }
+        } else if (aba === 'lixeira') {
+            document.getElementById('abaLixeira').classList.remove('hidden');
+            document.getElementById('btnNavLixeira').classList.add('active');
+            carregarLixeira();
         }
     };
 
@@ -727,21 +759,17 @@
         });
     }
 
-    // Helper para gerar o HTML do indicador visual de WhatsApp (somente o ícone)
     function renderizarBadgeZap(textoModelo) {
         if (!textoModelo) return '';
         const eZap = /záp|zap|whatsapp/i.test(textoModelo);
         return eZap ? `<span class="badge-zap-tag" title="Coleta/atendimento exclusivo pelo WhatsApp"><i class="fa-brands fa-whatsapp"></i></span>` : '';
     }
 
-    // Botão flutuante para adicionar (Záp) na linha atual do campo Modelo
     window.marcarLinhaAtualZap = function() {
         const inputModelo = document.getElementById('modelo');
         let lines = inputModelo.value.split('\n');
-        
         let cursorPosition = inputModelo.selectionStart;
         let currentLineIndex = inputModelo.value.substr(0, cursorPosition).split('\n').length - 1;
-
         let currentLine = lines[currentLineIndex] || '';
 
         if (!/záp|zap|whatsapp/i.test(currentLine)) {
@@ -769,7 +797,7 @@
             else localStorage.removeItem('lembrar_email');
 
             btnLogin.textContent = "Entrar"; btnLogin.disabled = false;
-            mostrarApp();
+            await mostrarApp();
         } catch (erro) {
             errorMsg.textContent = erro.message || "E-mail ou senha incorretos.";
             errorMsg.style.display = 'block';
@@ -796,7 +824,6 @@
             if (error) throw error;
 
             showMsg("Cadastro realizado com sucesso!", "success");
-            
             setTimeout(() => {
                 alternarFormularios('login');
                 document.getElementById('emailLogin').value = email; 
@@ -854,11 +881,11 @@
             if (error) throw error;
 
             showMsg("Senha atualizada com sucesso!", "success");
-            setTimeout(() => {
+            setTimeout(async () => {
                 btnRedefinir.textContent = "Salvar Nova Senha";
                 btnRedefinir.disabled = false;
                 statusMsg.style.display = 'none';
-                mostrarApp();
+                await mostrarApp();
             }, 2000);
 
         } catch (erro) {
@@ -905,7 +932,12 @@
         }
 
         try {
-            const { data, error } = await _supabase.from('clientes').select('*');
+            // Busca apenas registros ATIVOS (deleted_at nulo)
+            const { data, error } = await _supabase
+                .from('clientes')
+                .select('*')
+                .is('deleted_at', null);
+
             if (error) throw error;
             
             cadastros = data || [];
@@ -914,12 +946,79 @@
             console.warn("Modo Offline ativado ou falha de rede:", erro);
             if (!silencioso) mostrarToast("Modo Offline (Cache)", "error");
             const cache = localStorage.getItem('meyer_cache_clientes');
-            cadastros = cache ? JSON.parse(cache) : [];
+            cadastros = cache ? JSON.parse(cache).filter(c => !c.deleted_at) : [];
         }
 
         aplicarOrdenacao();
         filtrarContatos();
     }
+
+    // CARREGAR LISTA DE ITENS NA LIXEIRA (DELETED_AT NOT NULL)
+    async function carregarLixeira() {
+        const tabelaLixeiraCorpo = document.getElementById('tabelaLixeiraCorpo');
+        tabelaLixeiraCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando lixeira...</td></tr>';
+
+        try {
+            const { data, error } = await _supabase
+                .from('clientes')
+                .select('*')
+                .not('deleted_at', 'is', null)
+                .order('deleted_at', { ascending: false });
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                tabelaLixeiraCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">A lixeira está vazia.</td></tr>';
+                return;
+            }
+
+            tabelaLixeiraCorpo.innerHTML = '';
+            data.forEach(item => {
+                const dataExclusao = item.deleted_at ? new Date(item.deleted_at).toLocaleString('pt-BR') : '-';
+                const modificadoPor = item.modificado_por || 'Não registrado';
+                const mInicial = (item.modelo || '').split('\n')[0] || '-';
+                const sInicial = (item.serie || '').split('\n')[0] || '-';
+
+                tabelaLixeiraCorpo.innerHTML += `
+                    <tr>
+                        <td><strong>${item.cliente}</strong></td>
+                        <td>${mInicial} <small style="color:var(--text-muted);">(SN: ${sInicial})</small></td>
+                        <td><small>${modificadoPor}</small></td>
+                        <td><small>🕒 ${dataExclusao}</small></td>
+                        <td>
+                            <button class="btn-restaurar" onclick="restaurarCliente('${item.id}')" title="Restaurar registro para a lista ativa">
+                                <i class="fa-solid fa-rotate-left"></i> Restaurar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (erro) {
+            tabelaLixeiraCorpo.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 20px;">Erro ao carregar lixeira.</td></tr>';
+        }
+    }
+
+    // RESTAURAR CLIENTE DA LIXEIRA
+    window.restaurarCliente = async function(id) {
+        const { data: { session } } = await _supabase.auth.getSession();
+        const userEmail = session?.user?.email || 'Desconhecido';
+
+        const { error } = await _supabase
+            .from('clientes')
+            .update({ 
+                deleted_at: null,
+                modificado_por: userEmail 
+            })
+            .eq('id', id);
+
+        if (error) {
+            mostrarToast("Erro ao restaurar registro.", "error");
+        } else {
+            mostrarToast("Cliente restaurado com sucesso!");
+            await carregarLixeira();
+            await carregarERenderizar(true);
+        }
+    };
 
     window.ordenarPor = function(coluna) {
         if (colunaOrdenada === coluna) {
@@ -1177,7 +1276,6 @@
             cardLocal.querySelector('.local-text').textContent = lVal;
         }
 
-        // Sincroniza também no modo Grid
         const gridMaq = document.getElementById(`gridMaq-${rowIndex}`);
         if (gridMaq) {
             gridMaq.querySelector('.badge-text').textContent = `Série: ${sVal}`;
@@ -1349,7 +1447,6 @@
         atualizarPaginacao(totalItens);
     }
 
-    // RENDERIZAÇÃO EM MODO GRID/CARDS COM OS MESMOS CARDS INTERATIVOS DA LISTA
     function renderizarGrid() {
         const containerGrid = document.getElementById('containerGrid');
         containerGrid.innerHTML = '';
@@ -1585,7 +1682,7 @@
         }
     });
 
-    // PASSO 2: Soft Delete (Mover para Lixeira) em vez de Exclusão Física Permanente
+    // SOFT DELETE: Mover para Lixeira
     window.excluirCadastro = async function(id) {
         const confirmado = await abrirModalConfirm(
             "Mover para a Lixeira", 
@@ -1596,7 +1693,6 @@
             const { data: { session } } = await _supabase.auth.getSession();
             const userEmail = session?.user?.email || 'Desconhecido';
 
-            // Faz o .update() preenchendo deleted_at para ocultar o item sem perdê-lo no banco
             const { error } = await _supabase
                 .from('clientes')
                 .update({ 
@@ -1628,7 +1724,7 @@
             telaAuth.classList.remove('hidden');
             alternarFormularios('redefinir');
         } else if (session) {
-            mostrarApp();
+            await mostrarApp();
         }
     });
 </script>
