@@ -1585,19 +1585,35 @@
         }
     });
 
+    // PASSO 2: Soft Delete (Mover para Lixeira) em vez de Exclusão Física Permanente
     window.excluirCadastro = async function(id) {
-        const confirmado = await abrirModalConfirm("Excluir Cadastro", "Deseja realmente remover este registro? Esta ação não pode ser desfeita.");
+        const confirmado = await abrirModalConfirm(
+            "Mover para a Lixeira", 
+            "Deseja enviar este registro para a lixeira? Ele deixará de ser exibido na lista."
+        );
+        
         if (confirmado) {
-            const { error } = await _supabase.from('clientes').delete().eq('id', id);
+            const { data: { session } } = await _supabase.auth.getSession();
+            const userEmail = session?.user?.email || 'Desconhecido';
+
+            // Faz o .update() preenchendo deleted_at para ocultar o item sem perdê-lo no banco
+            const { error } = await _supabase
+                .from('clientes')
+                .update({ 
+                    deleted_at: new Date().toISOString(),
+                    modificado_por: userEmail 
+                })
+                .eq('id', id);
+
             if (error) {
-                mostrarToast("Erro ao excluir registro.", "error");
+                mostrarToast("Erro ao mover para a lixeira.", "error");
             } else {
                 if (editandoId === id) cancelarEdicao();
                 await carregarERenderizar(); 
-                mostrarToast("Excluído com sucesso!");
+                mostrarToast("Registro movido para a lixeira!");
             }
         }
-    }
+    };
 
     // INICIALIZAÇÃO DE SESSÃO
     const emailSalvo = localStorage.getItem('lembrar_email');
