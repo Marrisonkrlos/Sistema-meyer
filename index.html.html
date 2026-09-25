@@ -1306,7 +1306,11 @@
             textoEquipamentos += `\n- ${m} (Série: ${s})`;
         });
 
-        const msg = `Olá, Tudo bem? Bem vindo(a) ao Atendimento da Meyer Soluções. Poderia nos ajudar com a(s) impressora(s):${textoEquipamentos} ?`;
+        // Identifica o horário atual para definir Bom dia ou Boa tarde
+        const horaAtual = new Date().getHours();
+        const saudacaoHorario = (horaAtual >= 5 && horaAtual < 12) ? 'Bom dia' : 'Boa tarde';
+
+        const msg = `Olá, Tudo bem? ${saudacaoHorario}! Bem vindo(a) ao Atendimento da Meyer Soluções. Poderia nos ajudar com a(s) impressora(s):${textoEquipamentos} ?`;
 
         window.open(`https://wa.me/55${numeroLimpo}?text=${encodeURIComponent(msg)}`, '_blank');
         fecharModalWpp();
