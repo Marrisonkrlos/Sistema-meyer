@@ -217,7 +217,7 @@
         }
         .card-box-container:hover { border-color: rgba(37, 99, 235, 0.3); }
 
-        .card-row { display: flex; align-items: center; justify-content: flex-start; gap: 6px; }
+        .card-row { display: flex; align-items: center; justify-content: flex-start; gap: 6px; flex-wrap: wrap; }
         .card-row + .card-row { margin-top: 6px; }
 
         /* DESTAQUE PARA O NÚMERO DE SÉRIE */
@@ -238,7 +238,7 @@
 
         .machine-title, .person-name {
             font-weight: 700; font-size: 12px; color: var(--primary);
-            display: flex; align-items: center; gap: 5px;
+            display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
         }
 
         .phone-link {
@@ -334,8 +334,22 @@
 
         .badge-backup-tag {
             background: var(--warning); color: #ffffff; font-size: 11px;
-            padding: 3px 6px; border-radius: 4px; margin-left: 6px;
+            padding: 3px 6px; border-radius: 4px; margin-left: 6px; cursor: pointer;
             display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+        }
+
+        /* ALERTA DE VENCIMENTO DE STATUS (3 MESES) */
+        .badge-backup-alerta {
+            background: var(--danger); color: #ffffff; font-size: 11px; font-weight: 700;
+            padding: 3px 8px; border-radius: 4px; margin-left: 6px; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+            animation: pulse-alerta 1.5s infinite;
+        }
+
+        @keyframes pulse-alerta {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.85; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         #toast {
@@ -560,12 +574,12 @@
                             <button type="button" class="btn-fast-zap" onclick="marcarLinhaAtualZap()" title="Marcar linha atual com ícone do WhatsApp">
                                 <i class="fa-brands fa-whatsapp"></i>
                             </button>
-                            <button type="button" class="btn-fast-backup" onclick="marcarLinhaAtualBackup()" title="Marcar linha atual como impressora de Backup">
+                            <button type="button" class="btn-fast-backup" onclick="marcarLinhaAtualBackup()" title="Marcar linha atual como impressora de Backup com data">
                                 <i class="fa-solid fa-rotate-left"></i>
                             </button>
                         </div>
                     </label>
-                    <textarea id="modelo" required rows="2" placeholder="Ex: HP LaserJet (Záp)&#10;Epson L3150 (Backup)"></textarea>
+                    <textarea id="modelo" required rows="2" placeholder="Ex: HP LaserJet (Záp)&#10;Epson L3150 (Backup 25/09/2026)"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -814,7 +828,7 @@
         if (window.event) window.event.stopPropagation();
         if (!texto) return;
 
-        const textoLimpo = texto.replace(/\s*\((záp|zap|whatsapp|backup)\)/gi, '').trim();
+        const textoLimpo = texto.replace(/\s*\((záp|zap|whatsapp|backup\s*\d{2}\/\d{2}\/\d{4}|backup)\)/gi, '').trim();
 
         navigator.clipboard.writeText(textoLimpo).then(() => {
             mostrarToast("Copiado para a área de transferência!");
@@ -827,16 +841,35 @@
         if (!textoModelo) return { textoFormatado: '', badgeHtml: '' };
         
         const eZap = /záp|zap|whatsapp/i.test(textoModelo);
-        const eBackup = /backup/i.test(textoModelo);
+        const matchBackup = textoModelo.match(/backup(?:\s+(\d{2}\/\d{2}\/\d{4}))?/i);
+        const eBackup = !!matchBackup;
         
-        const textoFormatado = textoModelo.replace(/\s*\((záp|zap|whatsapp|backup)\)/gi, '').trim();
+        const textoFormatado = textoModelo.replace(/\s*\((záp|zap|whatsapp|backup\s*\d{2}\/\d{2}\/\d{4}|backup)\)/gi, '').trim();
         
         let badgeHtml = '';
         if (eZap) {
             badgeHtml += `<span class="badge-zap-tag" title="Coleta/atendimento exclusivo pelo WhatsApp"><i class="fa-brands fa-whatsapp"></i></span>`;
         }
         if (eBackup) {
-            badgeHtml += `<span class="badge-backup-tag" title="Impressora cadastrada como reserva/backup"><i class="fa-solid fa-rotate-left"></i> Backup</span>`;
+            const dataStr = matchBackup[1];
+            let ehVencido = false;
+
+            if (dataStr) {
+                const partes = dataStr.split('/');
+                const dataReg = new Date(partes[2], partes[1] - 1, partes[0]);
+                const diffDias = (new Date() - dataReg) / (1000 * 60 * 60 * 24);
+                if (diffDias >= 90) { // Alerta de 3 meses (90 dias)
+                    ehVencido = true;
+                }
+            }
+
+            const textoHoverData = dataStr ? `Data de Registro do Backup: ${dataStr}` : 'Impressora cadastrada como reserva/backup';
+
+            if (ehVencido) {
+                badgeHtml += `<span class="badge-backup-alerta" title="${textoHoverData} - Atenção! Passaram-se 3 meses. Solicite a página de status para atualizar no sistema."><i class="fa-solid fa-triangle-exclamation"></i> Atualizar Status!</span>`;
+            } else {
+                badgeHtml += `<span class="badge-backup-tag" title="${textoHoverData}"><i class="fa-solid fa-rotate-left"></i> Backup</span>`;
+            }
         }
 
         return { textoFormatado, badgeHtml };
@@ -863,8 +896,12 @@
         let currentLineIndex = inputModelo.value.substr(0, cursorPosition).split('\n').length - 1;
         let currentLine = lines[currentLineIndex] || '';
 
+        // Gera a data atual no formato DD/MM/AAAA
+        const hoje = new Date();
+        const dataFormatada = String(hoje.getDate()).padStart(2, '0') + '/' + String(hoje.getMonth() + 1).padStart(2, '0') + '/' + hoje.getFullYear();
+
         if (!/backup/i.test(currentLine)) {
-            lines[currentLineIndex] = currentLine.trim() ? `${currentLine.trim()} (Backup)` : '(Backup)';
+            lines[currentLineIndex] = currentLine.trim() ? `${currentLine.trim()} (Backup ${dataFormatada})` : `(Backup ${dataFormatada})`;
             inputModelo.value = lines.join('\n');
         }
         inputModelo.focus();
