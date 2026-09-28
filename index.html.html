@@ -1840,6 +1840,7 @@
                 cancelarEdicao(); 
                 mostrarToast("Atualizado com sucesso!"); 
                 await carregarERenderizar();
+                mudarAba('contatos');
             }
         } 
         else { 
@@ -1852,9 +1853,9 @@
             } else {
                 btnSalvar.textContent = 'Salvar Cadastro';
                 formCrud.reset(); 
-                document.getElementById('cliente').focus(); 
                 mostrarToast("Salvo com sucesso!"); 
                 await carregarERenderizar();
+                mudarAba('contatos');
             }
         }
     });
