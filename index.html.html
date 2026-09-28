@@ -1814,8 +1814,10 @@
         const { data: { session } } = await _supabase.auth.getSession();
         const userEmail = session?.user?.email || 'Desconhecido';
 
+        const nomeClienteSalvo = document.getElementById('cliente').value.trim();
+
         const dados = {
-            cliente: document.getElementById('cliente').value.trim(),
+            cliente: nomeClienteSalvo,
             responsavel: sanitizarLinhas(document.getElementById('responsavel').value),
             modelo: sanitizarLinhas(document.getElementById('modelo').value),
             serie: sanitizarLinhas(document.getElementById('serie').value),
@@ -1839,7 +1841,11 @@
             } else {
                 cancelarEdicao(); 
                 mostrarToast("Atualizado com sucesso!"); 
-                await carregarERenderizar();
+                
+                // Atualiza a lista, redireciona e busca direto pelo cliente editado
+                await carregarERenderizar(true);
+                document.getElementById('inputBusca').value = nomeClienteSalvo;
+                filtrarContatos();
                 mudarAba('contatos');
             }
         } 
@@ -1854,7 +1860,11 @@
                 btnSalvar.textContent = 'Salvar Cadastro';
                 formCrud.reset(); 
                 mostrarToast("Salvo com sucesso!"); 
-                await carregarERenderizar();
+
+                // Atualiza a lista, redireciona e busca direto pelo cliente cadastrado
+                await carregarERenderizar(true);
+                document.getElementById('inputBusca').value = nomeClienteSalvo;
+                filtrarContatos();
                 mudarAba('contatos');
             }
         }
