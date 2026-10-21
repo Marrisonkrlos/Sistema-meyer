@@ -1037,6 +1037,8 @@
             if (error) throw error;
 
             showMsg("Senha atualizada com sucesso!", "success");
+            emRecuperacao = false;
+
             setTimeout(async () => {
                 btnRedefinir.textContent = "Salvar Nova Senha";
                 btnRedefinir.disabled = false;
@@ -1906,12 +1908,15 @@
         document.getElementById('lembrarEmail').checked = true;
     }
 
+    let emRecuperacao = false; // <-- ADICIONADO AQUI
+
     _supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'PASSWORD_RECOVERY') {
+            emRecuperacao = true; // <-- ADICIONADO AQUI
             telaApp.classList.add('hidden');
             telaAuth.classList.remove('hidden');
             alternarFormularios('redefinir');
-        } else if (session) {
+        } else if (session && !emRecuperacao) { // <-- ADICIONADO AQUI
             await mostrarApp();
         }
     });
